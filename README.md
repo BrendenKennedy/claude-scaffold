@@ -16,24 +16,36 @@ lives as governed canon instead of scattered rules, and how work is remembered a
 ## Quick start
 
 ```bash
-# From the project you want to scaffold:
-~/dev/projects/claude-scaffold/install.sh .
+# 1. Get the scaffold (clone it once; reuse it for every project):
+git clone https://github.com/BrendenKennedy/claude-scaffold.git ~/dev/claude-scaffold
 
-# then, inside Claude Code in that project:
-/intake
+# 2. Drop it into the project you want to scaffold:
+cd ~/path/to/my-project
+~/dev/claude-scaffold/install.sh .
+
+# 3. Then, inside Claude Code in that project — BOTH, in this order:
+/intake      # picks your STACK    (tracker / config / data-versioning)
+/bootstrap   # builds the SHAPE    (conf/ tree + entry points the skills describe)
 ```
 
 `install.sh` copies `.claude/` + `CLAUDE.md` into the target and **never overwrites existing files**
-(safe to re-run; it reports what it skipped) and marks hooks executable. `/intake` then interviews you
-for your stack and configures the rest (below).
+(safe to re-run; it reports what it skipped) and marks hooks executable.
+
+**Run both commands, in that order.** `/intake` tunes the config to your tools; `/bootstrap` generates
+the project skeleton those tools are configured *for*. Skip `/bootstrap` and the skills document a
+project you don't have — `config-hydra` describes a `conf/` tree that isn't there, `training` describes
+a `train.py` that isn't there, and "config over constants" governs nothing.
+
+> This repo is a **GitHub template** — you can also hit **"Use this template"** to start a new project
+> from it directly, rather than cloning and installing into an existing one.
 
 ## The one idea that makes this work: `/intake` + two-tier skills
 
 Skills come in two tiers:
 
 - **Always-on** — the *chassis* (`governance`, `memory`, `testing`, `wave-planning`) and the
-  *workflow* skills (`datasets`, `training`, `evaluation`, `notebooks`). Tool-agnostic; they describe
-  the CV/DS work itself and reference whichever tool you chose.
+  *workflow* skills (`datasets`, `training`, `evaluation`, `pipelines`, `notebooks`). Tool-agnostic;
+  they describe the CV/DS work itself and reference whichever tool you chose.
 - **Tool skills** — one tool each (`env-uv`, `tracking-mlflow`, `config-hydra`, `data-dvc`, …), gated
   **on/off** by `settings.json` `skillOverrides`.
 
@@ -66,10 +78,12 @@ W&B over MLflow? `/intake` flips it — no edits to the workflow skills that ref
 │   ├── datasets/             # splits, label formats (COCO/YOLO/VOC), provenance, leakage
 │   ├── training/             # train/fine-tune loop — seeds, checkpoints, resume
 │   ├── evaluation/           # metrics (mAP/IoU/PR), eval harness, error analysis
+│   ├── pipelines/            # multi-stage cascades — the seam invariants (detect → crop → score)
 │   ├── notebooks/            # Jupyter hygiene — logic in modules, strip outputs
 │   └── _example/             # how to write a skill (the description/triggers contract)
 ├── commands/
-│   ├── intake.md             # /intake — one-time stack onboarding
+│   ├── intake.md             # /intake — one-time stack onboarding (the STACK)
+│   ├── bootstrap.md          # /bootstrap — one-time project skeleton (the SHAPE) — run after /intake
 │   ├── review.md             # /review the current diff
 │   ├── wrapup.md             # /wrapup — session close-out
 │   └── _TEMPLATE.md
@@ -109,10 +123,17 @@ install.sh                    # the drop-in installer
 ## After installing — make it yours
 
 1. **Run `/intake`** — pick your tracker / config / data-versioning tools; it writes `skillOverrides`
-   and fills the placeholders it can.
-2. **Fill the remaining `<PLACEHOLDER>`s** `/intake` lists — test commands, the architecture doc for
-   `software-architect`, any dataset paths.
-3. **Build real skills/agents** from `_example` / `_TEMPLATE`, then delete the leftovers.
+   and fills the stack placeholders.
+2. **Run `/bootstrap`** — it interviews you for the **CV task** (classification · detection ·
+   segmentation · anomaly detection · a multi-stage pipeline), generates the `conf/` tree and entry
+   points to match, *proves they run*, and back-fills the placeholders that needed that code to exist.
+   The task answer genuinely reshapes the skeleton — anomaly detection is not classification with the
+   labels renamed, and a "fit-not-trained" method (PatchCore, PaDiM) gets a `fit.py` with no optimizer,
+   scheduler, or epoch loop at all.
+3. **Fill the remaining `<PLACEHOLDER>`s** the two commands list — these need *your* decisions, not an
+   agent's guess: the architecture doc for `software-architect`, the policy domains in `memory/policy/`,
+   the data-remote URL.
+4. **Build real skills/agents** from `_example` / `_TEMPLATE`, then delete the leftovers.
 
 ## Conventions for placeholders
 
