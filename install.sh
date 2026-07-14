@@ -53,6 +53,8 @@ find "$TARGET/.claude/hooks" "$TARGET/.claude/scripts" -type f \
 echo
 echo "Done: $copied added, $skipped skipped (already present)."
 echo "Next:"
-echo "  1. Open $TARGET/CLAUDE.md and fill in the <PLACEHOLDERS>."
-echo "  2. Edit .claude/settings.json permissions for this project's tools."
-echo "  3. Rename .claude/skills/_example and the *_TEMPLATE.md files as you build real ones."
+echo "  1. In Claude Code, run /intake — it interviews you for your stack (tracker/config/data"
+echo "     versioning), writes .claude/settings.json skillOverrides, and fills the stack placeholders."
+echo "  2. Fill any remaining <PLACEHOLDER>s /intake lists (test commands, architecture doc, dataset paths)."
+echo "  3. Edit .claude/settings.json permissions for this project's tools."
+echo "  4. Rename .claude/skills/_example and the *_TEMPLATE.md files as you build real ones."

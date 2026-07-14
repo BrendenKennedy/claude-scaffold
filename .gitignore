@@ -12,3 +12,36 @@ __pycache__/
 
 # Note: this repo intentionally TRACKS the .claude/ skeleton — that's the point.
 # Only the personal-override files above are ignored.
+
+# --- ML / CV artifacts ---
+# uv virtual environment
+.venv/
+
+# Large model artifacts / weights (keep out of git; use a model registry / LFS)
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.safetensors
+*.pb
+
+# Datasets / large data — adjust these to match your project's actual layout
+data/
+datasets/
+
+# DVC: ignore the local cache + tmp, but KEEP *.dvc pointer files and dvc.lock tracked
+# (never add *.dvc here — those pointers are how DVC finds your data)
+/.dvc/cache
+/.dvc/tmp
+
+# MLflow tracking artifacts
+mlruns/
+mlartifacts/
+
+# Experiment / run outputs
+outputs/
+multirun/      # Hydra multirun sweeps
+wandb/         # Weights & Biases local run cache
+
+# Jupyter
+.ipynb_checkpoints/

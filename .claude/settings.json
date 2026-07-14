@@ -14,6 +14,15 @@
       "Read(CLAUDE.local.md)"
     ]
   },
+  "_skillOverrides_comment": "Tool-skill on/off profile. `/intake` writes this — enable the tools you use, disable the rest. Workflow + chassis skills are always on and are NOT listed here.",
+  "skillOverrides": {
+    "env-uv": "on",
+    "tracking-mlflow": "on",
+    "config-hydra": "on",
+    "data-dvc": "on",
+    "tracking-wandb": "off",
+    "config-omegaconf": "off"
+  },
   "hooks": {
     "PreToolUse": [
       {

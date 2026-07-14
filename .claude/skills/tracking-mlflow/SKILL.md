@@ -1,0 +1,87 @@
+---
+name: tracking-mlflow
+description: >
+  How this repo records experiments with **MLflow** — every train/eval run becomes a tracked, comparable,
+  reproducible record. Carries the commands that work today: `mlflow.set_experiment` + `mlflow.start_run`
+  to open a run, `log_param(s)` for the resolved hyperparams, `log_metric(..., step=)` for per-step curves,
+  `log_artifact(s)` for checkpoints / plots / the composed config file, `set_tag` for run metadata, and
+  `mlflow.pytorch.autolog()` for hands-off PyTorch logging. Also the tracking URI (local `mlruns/` vs a
+  remote server), run naming + organizing experiments, and comparing runs in the `mlflow ui`. Reach for it
+  when a train or eval loop needs to record what it did, when you can't find a past result, or when setting
+  up tracking on a new box. The `training` and `evaluation` skills CALL this to log; pair with `config-hydra`
+  (log the composed config) and the reproducibility always-on convention. Triggers: mlflow, mlflow tracking,
+  experiment tracking, track this run, log metrics, log params, log_metric, log_param, log_artifact,
+  start_run, set_experiment, autolog, mlflow.pytorch.autolog, mlruns, mlflow ui, MLFLOW_TRACKING_URI,
+  tracking server, tracking uri, compare runs, run name, experiment name, log the config, log a checkpoint,
+  where did that result go, reproducible experiment, record hyperparameters.
+---
+
+# tracking-mlflow — recording experiments so they're comparable & reproducible
+
+> On-demand: load this before adding tracking to a train/eval loop, or when you can't reconstruct what a
+> past run did. A run is only worth logging if it's **reproducible** — the resolved config + code version
+> must be in it (see the closing rule). Never hand-roll a CSV logger where a run belongs.
+
+## When this applies
+Instrumenting a train or eval loop to record params/metrics/artifacts, organizing runs into experiments,
+pointing at a local vs remote tracking store, or comparing runs to pick a winner. The `training` and
+`evaluation` skills defer here for the *how* of logging; this skill owns it.
+
+## Open a run
+Set the experiment (a named bucket of runs) once, then open a run as a context manager so it closes and
+flushes on exit — including on exception:
+
+```python
+import mlflow
+
+mlflow.set_experiment("<PLACEHOLDER: experiment name, e.g. detector-baselines>")
+with mlflow.start_run(run_name="<PLACEHOLDER: short human run name>") as run:
+    ...  # everything below logs into this run
+```
+- **Name runs meaningfully** — a short, scannable handle (`r50-fpn-lr3e-4`, `sweep-trial-017`), not the
+  default random slug. The `mlflow ui` run table is only as readable as your names.
+- **One experiment per line of investigation** (a model family, a dataset, a paper); trials/sweeps are the
+  runs inside it. Keep the taxonomy shallow.
+
+## What to log (and when)
+- **Params — the resolved config, once, at run start.** Hyperparameters and paths as they were *actually*
+  used (post-composition, post-override), not the defaults. `mlflow.log_params(cfg_dict)` for a flat dict,
+  `mlflow.log_param(k, v)` one at a time. Params are immutable per run — log the final values.
+- **Metrics — per step, with `step=`.** `mlflow.log_metric("train/loss", loss, step=global_step)` and
+  `mlflow.log_metric("val/mAP", score, step=epoch)`. Passing `step=` is what makes MLflow draw a curve
+  instead of a single point — always pass it. Namespace with `train/` `val/` `test/` prefixes.
+- **Artifacts — files worth keeping.** `mlflow.log_artifact(path)` (single) / `log_artifacts(dir)` (tree):
+  checkpoints, PR/confusion-matrix plots, sample predictions, and **the composed config file**. Group with
+  `artifact_path=` (e.g. `"checkpoints"`, `"plots"`).
+- **Tags — searchable run metadata.** `mlflow.set_tag("stage", "smoke")`, `set_tag("dataset_version", ...)`
+  — anything you'll later filter the run table on.
+
+## Autolog for PyTorch (the fast path)
+`mlflow.pytorch.autolog()` before the loop captures params, metrics, and the model automatically for
+PyTorch Lightning trainers. Call it once, then still **explicitly log the resolved config + git SHA**
+(autolog won't capture your Hydra composition or code version) and any custom metrics it doesn't know about.
+Autolog and manual `log_*` coexist — autolog for the boilerplate, manual for what's project-specific.
+
+## Where runs are stored (tracking URI)
+- **Local (default):** with no URI set, runs land in `./mlruns/`. Fine for solo work; add `mlruns/` to
+  `.gitignore` (runs are data, not source — version them via `data-dvc` if they must be shared).
+- **Remote server:** point at a shared tracking server so runs are centralized:
+  ```python
+  mlflow.set_tracking_uri("<PLACEHOLDER: MLFLOW_TRACKING_URI, e.g. http://<host>:5000>")
+  ```
+  Read the URI from the config system, **not** `os.environ` mid-logic — per the *config over constants*
+  always-on convention (see `config-hydra`). Same code runs locally or remote; only the URI changes.
+
+## Compare runs
+- **`mlflow ui`** (add `--backend-store-uri ./mlruns` or `--host`/`--port` as needed) — opens the web UI:
+  sort the run table by a metric, multi-select runs to overlay metric curves, diff their params.
+- Programmatic: `mlflow.search_runs(experiment_names=[...])` returns a DataFrame for scripted comparison
+  and to feed the `eval-analyst` agent's error analysis.
+
+## Gotcha
+A run without the **resolved config + code version (git SHA)** isn't reproducible — it's a number you can't
+regenerate. Log both every run: the composed config as an artifact (from `config-hydra`) and the SHA as a
+param/tag (`mlflow.set_tag("git_sha", <sha>)`; note a dirty tree). And **never log secrets or raw data** —
+tracking stores are broadly readable; params/tags/artifacts are the wrong place for credentials, PII, or
+dataset contents. This is the reproducibility always-on convention made concrete; the handling rules for
+sensitive data live in the `governance` skill (`.claude/memory/policy/`).
