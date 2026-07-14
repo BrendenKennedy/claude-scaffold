@@ -31,15 +31,18 @@ The few rules that apply to essentially every change (fuller policy — code idi
   are defined once and respected everywhere. (See `datasets` + `data-governance`.)
 - **Config over constants** — hyperparameters and paths flow through the config system, never hardcoded
   or read from the environment in the middle of business logic.
-- **Deps via `uv`** — add with `uv add` so `pyproject.toml` + `uv.lock` stay in sync; never hand-edit.
+- **Deps via `uv`** — add with `uv add` so `pyproject.toml` + `uv.lock` stay in sync; never hand-edit
+  (the `guard-pyproject` hook blocks dependency edits to enforce this).
 - **Don't hand-format** — the `validate-python` hook (ruff) owns style. Note its bite: it runs
   `ruff check --fix` after *every* Edit/Write, so an import added in one edit and used in the next gets
   auto-deleted as F401 in between. Write the import and its usage in the **same** edit.
 
 ## Skills — `.claude/skills/<name>/SKILL.md`
-Two tiers. **Workflow skills** are always on (tool-agnostic, the CV/DS work itself). **Tool skills** are
-one-tool-each and gated on/off by `/intake` via `settings.json` `skillOverrides` — swap MLflow for W&B,
-Hydra for plain OmegaConf, etc., without touching the workflow skills that reference them.
+Two tiers: **always-on** and **tool-gated**. The always-on tier has two groups — **chassis** (the
+*process*: verify, remember, govern, parallelize) and **workflow** (the *CV/DS domain* work itself,
+tool-agnostic). **Tool skills** are one-tool-each and gated on/off by `/intake` via `settings.json`
+`skillOverrides` — swap MLflow for W&B, Hydra for plain OmegaConf, etc., without touching the
+always-on skills that reference them.
 
 **Chassis (always on):**
 | Skill | Reach for it when… |
@@ -65,7 +68,7 @@ Hydra for plain OmegaConf, etc., without touching the workflow skills that refer
 | `tracking-mlflow` | MLflow experiment tracking | on |
 | `config-hydra` | Hydra config composition + sweeps (on OmegaConf) | on |
 | `data-dvc` | DVC data/model versioning | on |
-| `<tracking-wandb>` | Weights & Biases | off (fast-follow) |
+| `tracking-wandb` | Weights & Biases experiment tracking | off (`/intake` flips) |
 | `<skill-name>` | `<a tool you add>` | — |
 
 ## Subagents — `.claude/agents/<name>.md`
@@ -91,7 +94,10 @@ Hydra for plain OmegaConf, etc., without touching the workflow skills that refer
 | Hook | Event | Does |
 |---|---|---|
 | `validate-bash.sh` | PreToolUse · Bash | blocks recursive force-deletes of root/home (+ your project rules) |
+| `guard-pyproject.py` | PreToolUse · Edit/Write | blocks dependency edits to `pyproject.toml` — deps go through `uv add`/`uv remove` |
+| `guard-notebook-outputs.py` | PreToolUse · Edit/Write | blocks writing `.ipynb` files that carry cell outputs — notebooks commit clean |
 | `validate-python.py` | PostToolUse · Edit/Write | runs `uvx ruff format` + `ruff check --fix` on edited `.py` files |
+| `run-leakage-tests.sh` | Stop | runs any `leakage` tests before the session ends; a failure blocks the stop |
 
 ## Memory — `.claude/memory/`
 The **data store** for cross-session working memory (refined summaries, **not** raw dumps) — pulled in on
@@ -109,4 +115,4 @@ demand, never auto-loaded. The read/write process is the `memory` skill; this is
 |---|---|
 | `.claude/settings.json` | permissions + hook wiring + `skillOverrides` (the tool-skill profile `/intake` writes) |
 | `.claude/scripts/` | helper scripts called by hooks/commands (README inside) |
-| `.mcp.json` | MCP server wiring, if/when you add MCP servers (lives at repo root) |
+| `.mcp.json` | MCP server wiring — **not shipped**; create at repo root if/when you add MCP servers |
