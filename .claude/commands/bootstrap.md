@@ -14,8 +14,10 @@ package under `src/` (read it from `pyproject.toml` — do not invent one).
 The skeleton's shape depends on the task; don't guess it. Ask, batched into one call:
 
 - **CV task** — image classification *(default)* / object detection / semantic segmentation /
-  **anomaly detection** (industrial defect finding). This decides the model, the loss, the metric, the label
-  format, and — for anomaly detection — the entire data and training shape.
+  **anomaly detection** (industrial defect finding) / **a multi-stage pipeline** (localize the item, then
+  judge it — e.g. detect the part, then run anomaly detection on the crop). This decides the model, the
+  loss, the metric, the label format, and — for anomaly detection and pipelines — the entire data and
+  training shape. If the answer is a pipeline, **load the `pipelines` skill** and see step 3c.
 - **Dataset name** — the short slug used for `conf/dataset/<name>.yaml` and `data/<name>/`. This is the value
   `/intake` had to leave as a `<PLACEHOLDER>` in `config-hydra`, `datasets`, and `data-dvc`.
 - **Model/backbone to start from** — e.g. `resnet18` (torchvision). For anomaly detection, ask which
@@ -131,6 +133,31 @@ normal-only training) and `evaluation` (AUROC/AUPRO, never accuracy) first, then
     is the fitted memory bank; still save it with config + git SHA.
 - **Eval:** image-level AUROC + pixel-level AUROC/AUPRO, per defect type. If you emit `accuracy`, you have
   written the wrong eval — on a line running 99.5% good parts, calling everything "good" scores 99.5%.
+
+### 3c. If the task is a multi-stage pipeline, the seam is the project
+
+**Load the `pipelines` skill first — it owns this, and the single-task skills do not.** A cascade
+(detect → crop → score) is not two projects stapled together; every interesting failure lives in the seam.
+Non-negotiables when emitting it:
+
+- **Stages are pure functions between contracts:** `Image → Detections → Crops → Scores`. Each stage is
+  independently runnable and testable. No stage reaches around another; no stage re-opens the source image
+  to patch up an upstream mistake.
+- **ONE split manifest, shared by every stage**, defined at the part/lot level. A detector trained on
+  images that appear in stage 2's test set contaminates the result even though stage 2 never saw them.
+  Assert it in a test.
+- **One crop implementation**, deterministic (fixed padding, resize, sort order), called by BOTH fit and
+  eval. Two crop paths = a distribution shift you built yourself.
+- **`eval.py` reports THREE numbers in one run:** per-stage (detector mAP), oracle-input (stage 2 on
+  ground-truth crops), and end-to-end (stage 2 on predicted crops, **with missed detections folded in as
+  system misses**). The gap between the last two is what stage 1 costs you. A pipeline eval that reports
+  only stage 2's metric is hiding every missed detection.
+- **Pin the upstream checkpoint hash into the downstream artifact**, and freeze the upstream stage while
+  fitting the downstream one.
+- **No upstream model yet? Start with the ORACLE stage** — stage 1 returns the ground-truth region (or the
+  whole image as one region) behind the same contract, config-selectable. The pipeline is green end-to-end
+  on day one, and the real detector drops into the same slot with zero downstream change. This is never
+  throwaway: you need the oracle path permanently for the ablation above.
 
 ## 4. Never clobber (but *do* extend)
 

@@ -55,6 +55,7 @@ Hydra for plain OmegaConf, etc., without touching the workflow skills that refer
 | `datasets` | defining/splitting a dataset, label formats (COCO/YOLO/VOC), provenance, or guarding against leakage |
 | `training` | writing or changing a train/fine-tune loop — config, checkpointing, resume, seeds/determinism |
 | `evaluation` | building an eval harness, choosing metrics (mAP/IoU/PR), error analysis, or comparing runs |
+| `pipelines` | composing models into a **cascade** (localize the item, then judge it) — the seam invariants: one shared split, stages as pure functions, error propagation, oracle-vs-end-to-end, joint thresholds |
 | `notebooks` | working in Jupyter — keep logic in importable modules, thin notebooks, strip outputs |
 
 **Tool skills (gated by `/intake` via `skillOverrides`):**
