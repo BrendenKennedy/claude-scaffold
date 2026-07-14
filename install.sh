@@ -50,6 +50,15 @@ done < <(
 find "$TARGET/.claude/hooks" "$TARGET/.claude/scripts" -type f \
   \( -name '*.sh' -o -name '*.py' \) -exec chmod +x {} + 2>/dev/null || true
 
+# Stamp the scaffold version into the target. Unlike the files above, this IS overwritten on
+# re-run — it records which scaffold version last touched this project, which is what makes a
+# future "what's changed upstream?" diff possible at all.
+version="$(cat "$SCRIPT_DIR/VERSION" 2>/dev/null || echo unknown)"
+sha="$(git -C "$SCRIPT_DIR" rev-parse --short HEAD 2>/dev/null || echo unknown)"
+printf '%s (%s)\n' "$version" "$sha" > "$TARGET/.claude/scaffold-version"
+echo
+echo "Stamped .claude/scaffold-version: $version ($sha)"
+
 echo
 echo "Done: $copied added, $skipped skipped (already present)."
 echo "Next (the first two are the setup, in order):"

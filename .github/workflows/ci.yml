@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check-scaffold:
+    name: Scaffold self-consistency
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: shellcheck install.sh + hooks + scripts
+        run: |
+          sudo apt-get install -y shellcheck >/dev/null
+          # -S warning: info-level findings (e.g. SC2016 on a regex that matches a literal $HOME) don't block
+          shellcheck -S warning install.sh .claude/hooks/*.sh .claude/scripts/*.sh
+
+      - name: check-scaffold (drift, frontmatter, config, install)
+        run: .claude/scripts/check-scaffold.sh

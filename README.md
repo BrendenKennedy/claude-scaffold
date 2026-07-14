@@ -29,7 +29,8 @@ cd ~/path/to/my-project
 ```
 
 `install.sh` copies `.claude/` + `CLAUDE.md` into the target and **never overwrites existing files**
-(safe to re-run; it reports what it skipped) and marks hooks executable.
+(safe to re-run; it reports what it skipped), marks hooks executable, and stamps
+`.claude/scaffold-version` so a project always knows which scaffold version it came from.
 
 **Run both commands, in that order.** `/intake` tunes the config to your tools; `/bootstrap` generates
 the project skeleton those tools are configured *for*. Skip `/bootstrap` and the skills document a
