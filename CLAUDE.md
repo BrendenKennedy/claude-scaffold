@@ -37,9 +37,11 @@ The few rules that apply to essentially every change (fuller policy — code idi
   auto-deleted as F401 in between. Write the import and its usage in the **same** edit.
 
 ## Skills — `.claude/skills/<name>/SKILL.md`
-Two tiers. **Workflow skills** are always on (tool-agnostic, the CV/DS work itself). **Tool skills** are
-one-tool-each and gated on/off by `/intake` via `settings.json` `skillOverrides` — swap MLflow for W&B,
-Hydra for plain OmegaConf, etc., without touching the workflow skills that reference them.
+Two tiers: **always-on** and **tool-gated**. The always-on tier has two groups — **chassis** (the
+*process*: verify, remember, govern, parallelize) and **workflow** (the *CV/DS domain* work itself,
+tool-agnostic). **Tool skills** are one-tool-each and gated on/off by `/intake` via `settings.json`
+`skillOverrides` — swap MLflow for W&B, Hydra for plain OmegaConf, etc., without touching the
+always-on skills that reference them.
 
 **Chassis (always on):**
 | Skill | Reach for it when… |
