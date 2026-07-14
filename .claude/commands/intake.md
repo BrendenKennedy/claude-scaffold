@@ -16,9 +16,13 @@ where the tool allows:
 - **Data versioning** — DVC *(default)* / git-lfs / none.
 - **Baseline confirm** — the scaffold assumes **uv** for envs and an **NVIDIA GPU** (local or over SSH).
   Confirm that holds, and ask whether the GPU box is **aarch64/ARM** (e.g. a Grace-Blackwell / DGX Spark)
-  — because ARM needs the ARM torch index placeholder filled in `env-uv`.
+  — because ARM needs the ARM torch index placeholder filled in `env-uv`. If the GPU is remote, also
+  capture the SSH host alias (fills the `notebooks` port-forward example).
+- **Landing convention** — merge branches into `main` locally *(default)* / push + open a PR. And:
+  required commit trailer — none *(default)* / a custom line (e.g. a `Co-Authored-By`). Fills the
+  `memory` skill's commit/land placeholders, which `/wrapup` runs against.
 
-Capture the four answers before touching any file.
+Capture the five answers before touching any file.
 
 ## 2. Write `settings.json` `skillOverrides`
 
@@ -51,6 +55,13 @@ interview now answers; leave the rest for the user. The answer-determined ones:
   Fill **only if** the box is aarch64/ARM; on x86 leave the surrounding note as-is and note it's N/A.
 - **Dataset path placeholders** — e.g. `data/<PLACEHOLDER: dataset dir>` / `<PLACEHOLDER: dataset_name>`
   in `data-dvc` and `datasets`. Fill if the user named a dataset/path during intake; otherwise leave.
+- **`memory` skill commit/land placeholders** — `.claude/skills/memory/SKILL.md` (the commit-trailer
+  line and the landing-convention line). The landing-convention question always answers these — the
+  defaults ("merge locally", "no trailer") resolve them too, so this bullet always completes; never
+  leave them blank, because `/wrapup` runs the memory skill verbatim and hits them.
+- **`notebooks` gpu-host** — `.claude/skills/notebooks/SKILL.md` (`ssh -L ... <PLACEHOLDER: gpu-host>`).
+  Fill **only if** the GPU box is remote (from the baseline confirm); if local, leave the example
+  as-is and note it's N/A — same pattern as the ARM torch index.
 
 Don't invent values. If an answer wasn't given, leave the placeholder and list it in the summary.
 

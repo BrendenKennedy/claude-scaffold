@@ -52,12 +52,14 @@ Define stages so DVC tracks the DAG of deps → outs and reruns only what change
 # dvc.yaml
 stages:
   train:
-    cmd: uv run python -m <PLACEHOLDER: train module> --config configs/train.yaml
-    deps: [data/<PLACEHOLDER: dataset>, src/<PLACEHOLDER: pkg>/train.py]
-    params: [configs/train.yaml:]        # param changes invalidate the stage
-    outs: [models/<PLACEHOLDER: checkpoint>]
+    cmd: uv run python train.py          # the Hydra entry point; fixed overrides go on this line
+    deps: [conf/, data/<PLACEHOLDER: dataset>, src/<PLACEHOLDER: pkg>/]
+    outs: [models/best.pt, models/last.pt]
     metrics: [metrics.json]
 ```
+With Hydra there is no `--config <file>` flag and no `params:` entry — DVC's `params:` wants one flat
+file, which a composed `conf/` tree isn't. The config participates in the DAG as the `deps: [conf/, …]`
+entry instead: any config edit invalidates the stage, which is the behavior you want.
 - **Run/reproduce:** `dvc repro` — executes stages whose deps/params/outs changed, skips the rest.
 - **`dvc.lock`** records the exact md5 of every dep, param, and out from the last run — the machine-checked
   record of "what produced what". Commit it. Use `uv run` in `cmd` so stages execute inside the locked env

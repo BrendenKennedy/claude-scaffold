@@ -13,6 +13,8 @@
 #                   every skillOverride set "on" has a skill directory backing it
 #   4. INSTALL    — install.sh into a temp dir lands every file, re-run adds nothing (idempotent),
 #                   and the <PLACEHOLDER> count survives the trip
+#   5. OWNERSHIP  — every file carrying a <PLACEHOLDER> is claimed by /intake or /bootstrap (named
+#                   in their fill lists) — an unclaimed placeholder is a blank nobody will ever fill
 set -uo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
@@ -105,6 +107,29 @@ dst_ph="$(grep -rho '<PLACEHOLDER' "$tmp" | wc -l)"
 rerun="$(./install.sh "$tmp" | grep -c '^  add:' || true)"
 [ "$rerun" = "0" ] || fail "install.sh re-run added $rerun files — it must be idempotent"
 ok "install: $dst_count files land, $dst_ph placeholders intact, re-run adds nothing"
+
+# ---- 5. PLACEHOLDER OWNERSHIP -------------------------------------------------
+# A <PLACEHOLDER> is a promise that something fills it. The fillers are /intake §3, /bootstrap §6,
+# and their human-decision lists — all live in the two command files. So: every file carrying a
+# placeholder must be findable from those commands (by path, filename, or parent dir name).
+unowned=0
+while IFS= read -r f; do
+  case "$f" in
+    */_example/*|*_TEMPLATE*|*/check-scaffold.sh) continue ;;  # templates + this script's own grep strings
+  esac
+  rel="${f#./}"
+  base="$(basename "$f" .md)"
+  parent="$(basename "$(dirname "$f")")"
+  # For skills the filename is always SKILL.md — a meaningless key that matches the commands' own
+  # prose. The identifying name is the parent dir; use it in place of the base.
+  [ "$base" = "SKILL" ] && base="$parent"
+  if ! grep -qF -e "$rel" -e "$base" -e "$parent" \
+       .claude/commands/intake.md .claude/commands/bootstrap.md; then
+    fail "unowned placeholders: $rel has <PLACEHOLDER>s but neither /intake nor /bootstrap names it"
+    unowned=$((unowned + 1))
+  fi
+done < <(grep -rl --exclude-dir=__pycache__ '<PLACEHOLDER' .claude CLAUDE.md README.md 2>/dev/null)
+[ "$unowned" -eq 0 ] && ok "ownership: every placeholder-carrying file is claimed by /intake or /bootstrap"
 
 # ---- verdict ----------------------------------------------------------------
 echo

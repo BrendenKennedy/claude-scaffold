@@ -199,6 +199,12 @@ side by side in the same files** — read each, don't sweep:
 
 - **Resolve now (code-dependent):** the dataset slug in `config-hydra` / `datasets` / the data-versioning
   skill, and any entry-point path. You just created the thing they were waiting on.
+- **Resolve now — `testing/SKILL.md`'s four `/bootstrap fills this` slots.** Step 5 computed every
+  answer; write them in: the package import check (`uv run python -c "import <pkg>"` with the real
+  package name), the tiny-data-smoke invocation (the real test-file path from step 5.2), the seed-helper
+  path (`<pkg>.seed.seed_everything`), and the Preconditions `.env` keys (the ones the entry points
+  actually read — `DATA_ROOT`, the tracker URI). A verification skill whose commands are blank teaches
+  the agent to guess; these four lines are the whole point of that skill.
 - **Leave (human-decision):** the data remote URL, `software-architect`'s architecture principles,
   `governance`'s policy domains, and the org-specific rules in `memory/policy/`. Don't invent values — a
   wrong policy is worse than a visible blank.

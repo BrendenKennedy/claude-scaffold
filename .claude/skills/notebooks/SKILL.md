@@ -70,7 +70,7 @@ Committed outputs bloat the repo, leak data into diffs, and make every re-run a 
 When a notebook needs to run headless or across parameter sets, don't click through it:
 - **`jupyter nbconvert --execute`** — run top-to-bottom, fail on any error (a reproducibility check in one):
   ```bash
-  uv run jupyter nbconvert --to notebook --execute notebooks/<PLACEHOLDER: name>.ipynb --output out.ipynb
+  uv run jupyter nbconvert --to notebook --execute notebooks/eda.ipynb --output out.ipynb
   ```
 - **`papermill`** — same, but inject parameters into a tagged `parameters` cell for sweeps:
   ```bash
