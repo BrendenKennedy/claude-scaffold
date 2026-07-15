@@ -163,7 +163,7 @@ eval that re-loads the checkpoint, a resume.
 
 ## Security model
 
-Stated plainly so nobody has to infer it: **the hooks are guardrails against agent *mistakes*, not a
+**the hooks are guardrails against agent *mistakes*, not a 
 sandbox against an adversary.** They pattern-match and fail open; a determined bypass defeats them.
 The actual security boundary is Claude Code's permission system (the `settings.json` allow/deny
 lists) and whatever OS-level isolation you run.
