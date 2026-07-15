@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
-# PreToolUse(Bash) guard. Reads the hook JSON on stdin and BLOCKS (exit 2) dangerous commands.
-# Exit 0 = allow. Fail-open: if the command can't be parsed, it is allowed (a guard, not a gate).
+# PreToolUse(Bash) guard — THREE tiers, first match wins:
+#
+#   BLOCK (exit 2)        never OK: root/home wipes, .env reads, piping a download into a shell.
+#   ASK   (JSON + exit 0) legit but irreversible: destructive ops get a confirmation dialog that
+#                         fires in EVERY permission mode — including acceptEdits and
+#                         bypassPermissions (per the hooks docs' permissionDecision table). This is
+#                         the tier that survives "yolo mode".
+#   ALLOW (exit 0)        everything else defers to the normal permission flow.
+#
+# Fail-open: if the command can't be parsed, it is allowed (a guard, not a gate). Pattern-matching
+# is best-effort by design — the threat model lives in .claude/memory/policy/security.md.
 set -uo pipefail
 
 input="$(cat)"
@@ -12,26 +21,86 @@ cmd="$(printf '%s' "$input" \
 
 [ -z "$cmd" ] && exit 0
 
-# 1) Universal guard: block recursive force-deletes aimed at a root / home path.
+# Force a confirmation dialog. stdout must be ONLY this JSON; reasons stay quote-free.
+ask() {
+  printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask","permissionDecisionReason":"%s"}}\n' "$1"
+  exit 0
+}
+
+# ── BLOCK tier ───────────────────────────────────────────────────────────────
+
+# B1) Recursive force-deletes aimed at a root / home path.
 if printf '%s' "$cmd" | grep -Eq 'rm[[:space:]]+-[a-zA-Z]*(rf|fr)[a-zA-Z]*[[:space:]]+(/|~|/\*|\$HOME)([[:space:]]|;|$)'; then
   echo "BLOCKED: refusing a recursive force-delete of a root/home path. Narrow the target path." >&2
   exit 2
 fi
 
-# 2) Secrets guard: block shell reads of .env files (the Read-tool deny in settings.json
-#    doesn't cover the shell path). `.env.example` ships empty values and stays readable —
-#    strip its mentions first, then test what's left for a read command aimed at a .env file.
-#    Best-effort like everything here: this stops the accident, not a determined bypass
-#    (see .claude/memory/policy/security.md for the threat model).
+# B2) Shell reads of .env files (the Read-tool deny in settings.json doesn't cover the shell path).
+#     `.env.example` ships empty values and stays readable — strip its mentions first.
 stripped="${cmd//.env.example/}"
 if printf '%s' "$stripped" | grep -Eq '(^|[;&|`([:space:]])(cat|less|more|head|tail|bat|strings|xxd|od|grep|egrep|fgrep|awk|cut|paste|sort|uniq|source)[[:space:]][^;|&]*\.env([^A-Za-z0-9_-]|$)'; then
   echo "BLOCKED: refusing a shell read of a .env file — secrets stay out of the transcript. Read .env.example for the expected keys, or ask the user for the value you need." >&2
   exit 2
 fi
 
+# B3) Piping a download straight into an interpreter — untrusted code execution
+#     (security canon: no `curl | sh`; dependencies enter through `uv add`).
+if printf '%s' "$cmd" | grep -Eq '(^|[;&|`([:space:]])(curl|wget)[[:space:]][^;&]*\|[[:space:]]*(sudo[[:space:]]+)?(ba|z|da|k)?sh([[:space:]]|$)|(^|[;&|`([:space:]])(curl|wget)[[:space:]][^;&]*\|[[:space:]]*python'; then
+  echo "BLOCKED: refusing to pipe a download into an interpreter. Fetch to a file, review it, then run it — or add the dependency through uv (see security.md, supply chain)." >&2
+  exit 2
+fi
+
+# ── ASK tier — irreversible-if-wrong operations get a dialog in every permission mode ────────────
+
+# A1) Any recursive rm (root/home already blocked above; this catches project paths, incl. inside
+#     compound commands the deny-list prefix rules can't see).
+if printf '%s' "$cmd" | grep -Eq '(^|[;&|`([:space:]])rm[[:space:]]([^;|&]*[[:space:]])?-[a-zA-Z]*[rR]'; then
+  ask "Recursive delete - confirm the target directory is right (and not data/, models/, or anything DVC-tracked)."
+fi
+
+# A2) Deleting / truncating protected ML assets even non-recursively: datasets, checkpoints,
+#     the tracking DB, the lockfile, DVC state.
+if printf '%s' "$cmd" | grep -Eq '(^|[;&|`([:space:]])(rm|shred|truncate|unlink)[[:space:]][^;|&]*(mlflow\.db|\.pt([[:space:]]|$|["'"'"'])|uv\.lock|\.dvc(/|[[:space:]]|$)|(^|[[:space:]"'"'"'])data/|models/)'; then
+  ask "This deletes a tracked ML asset (dataset, checkpoint, tracking DB, or lockfile). Confirm it is disposable."
+fi
+
+# A3) find -delete / -exec rm — recursive deletion by another name.
+if printf '%s' "$cmd" | grep -Eq '(^|[;&|`([:space:]])find[[:space:]][^;|&]*(-delete|-exec[[:space:]]+rm)'; then
+  ask "find with -delete/-exec rm - confirm the match pattern before it walks the tree."
+fi
+
+# A4) Git operations that discard work or rewrite history.
+if printf '%s' "$cmd" | grep -Eq '(^|[;&|`([:space:]])git[[:space:]]+clean[[:space:]][^;|&]*-[a-zA-Z]*f'; then
+  ask "git clean -f deletes untracked files permanently - confirm nothing un-committed is needed."
+fi
+if printf '%s' "$cmd" | grep -Eq '(^|[;&|`([:space:]])git[[:space:]]+reset[[:space:]][^;|&]*--hard'; then
+  ask "git reset --hard discards uncommitted changes - confirm the working tree is disposable."
+fi
+if printf '%s' "$cmd" | grep -Eq '(^|[;&|`([:space:]])git[[:space:]]+checkout[[:space:]]+(--[[:space:]]|\.([[:space:]]|$))'; then
+  ask "git checkout with a pathspec discards uncommitted changes to those files - confirm."
+fi
+if printf '%s' "$cmd" | grep -Eq '(^|[;&|`([:space:]])git[[:space:]]+restore[[:space:]]' \
+   && ! printf '%s' "$cmd" | grep -Eq -- '--staged'; then
+  ask "git restore overwrites working-tree files with the committed version - confirm."
+fi
+if printf '%s' "$cmd" | grep -Eq '(^|[;&|`([:space:]])git[[:space:]]+push[[:space:]][^;|&]*(--force|-f([[:space:]]|$))'; then
+  ask "Force-push rewrites remote history - confirm this is wanted (landing is normally an explicit user ask)."
+fi
+if printf '%s' "$cmd" | grep -Eq '(^|[;&|`([:space:]])git[[:space:]]+branch[[:space:]][^;|&]*-D([[:space:]]|$)'; then
+  ask "git branch -D force-deletes an unmerged branch - confirm its work is landed or disposable."
+fi
+if printf '%s' "$cmd" | grep -Eq '(^|[;&|`([:space:]])git[[:space:]]+(filter-branch|filter-repo)|reflog[[:space:]]+expire'; then
+  ask "History rewrite - confirm; this changes hashes and invalidates clones."
+fi
+
+# A5) DVC operations that drop data from the cache/remote.
+if printf '%s' "$cmd" | grep -Eq '(^|[;&|`([:space:]])dvc[[:space:]]+(gc|destroy|remove)([[:space:]]|$)'; then
+  ask "This DVC command discards tracked data or DVC state - confirm the pointers/commits that need those bytes are safe."
+fi
+
 # ─────────────────────────────────────────────────────────────────────────────
-# 3) Project-specific rules go here. Pattern: match the command, echo a reason to
-#    stderr, exit 2 to block. Delete this block if you have no extra rules.
+# Project-specific rules go here. Patterns: BLOCK = echo reason to stderr, exit 2;
+# ASK = call ask "reason". Delete this block if you have no extra rules.
 #
 # Example — forbid system-package ops on a protected host named in the command:
 #   if printf '%s' "$cmd" | grep -Eq '(^|[^a-zA-Z])PROTECTED_HOST([^a-zA-Z]|$)' \

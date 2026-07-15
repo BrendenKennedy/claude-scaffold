@@ -168,7 +168,10 @@ sandbox against an adversary.** They pattern-match and fail open; a determined b
 The actual security boundary is Claude Code's permission system (the `settings.json` allow/deny
 lists) and whatever OS-level isolation you run.
 
-What is enforced today: secrets stay out of the transcript (`.env` reads are denied on both the Read
+What is enforced today: destructive-but-legitimate operations (recursive deletes, `git reset
+--hard`, force-push, deleting datasets/checkpoints) trigger a confirmation dialog that fires in
+*every* permission mode — including `bypassPermissions` — via the hook `permissionDecision: ask`
+mechanism, piping a download into a shell is blocked outright, secrets stay out of the transcript (`.env` reads are denied on both the Read
 and shell paths), credential-shaped tokens can't be written into tracked files (`guard-secrets.py`,
 plus gitleaks on human commits via the pre-commit template), dependencies only enter through
 `uv add`, notebook outputs never reach git, and `git push` is deliberately absent from the

@@ -93,7 +93,7 @@ always-on skills that reference them.
 ## Hooks — `.claude/hooks/` (wired in `settings.json`)
 | Hook | Event | Does |
 |---|---|---|
-| `validate-bash.sh` | PreToolUse · Bash | blocks recursive force-deletes of root/home (+ your project rules) |
+| `validate-bash.sh` | PreToolUse · Bash | three tiers: blocks root/home wipes, `.env` reads, curl-pipe-to-shell; forces a confirm dialog (every permission mode) on destructive ops — recursive deletes, `git reset --hard`/`clean -f`/force-push, `dvc gc`, deleting data/models/`mlflow.db` (+ your project rules) |
 | `guard-pyproject.py` | PreToolUse · Edit/Write | blocks dependency edits to `pyproject.toml` — deps go through `uv add`/`uv remove` |
 | `guard-notebook-outputs.py` | PreToolUse · Edit/Write | blocks writing `.ipynb` files that carry cell outputs — notebooks commit clean |
 | `guard-secrets.py` | PreToolUse · Edit/Write | blocks writes containing credential-shaped tokens (API keys, private keys) — secrets stay in `.env` |

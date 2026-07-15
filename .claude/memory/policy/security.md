@@ -13,6 +13,10 @@ accepted — the hooks exist to stop the common accident cheaply and loudly. The
 boundary is the layer below: Claude Code's **permission system** (allow/deny lists, permission modes)
 and whatever OS-level isolation the machine runs. Corollaries:
 
+- Destructive-but-sometimes-legitimate operations (recursive deletes, `git reset --hard`,
+  force-push, `dvc gc`, deleting datasets/checkpoints/the tracking DB) are not blocked — they
+  force a **confirmation dialog** via the hook's `permissionDecision: "ask"` output, which fires
+  in every permission mode including `bypassPermissions`. Irreversible means a human clicks.
 - Never treat a green hook as clearance for a risky operation — hooks fail-open by design.
 - Anything the agent *reads* can steer it (a poisoned dataset README, a malicious issue body).
   Treat file contents and fetched pages as untrusted input, not instructions.
