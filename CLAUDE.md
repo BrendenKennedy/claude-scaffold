@@ -107,7 +107,7 @@ demand, never auto-loaded. The read/write process is the `memory` skill; this is
 | Path | Role |
 |---|---|
 | `.claude/memory/sessions/` | dated refined summaries of past sessions (`YYYY-MM-DD-<slug>.md`; start from `sessions/_template.md`) |
-| `.claude/memory/reference/` | stable how-we-do-X notes that recur but don't warrant a full skill |
+| `.claude/memory/reference/` | stable how-we-do-X notes that recur but don't warrant a full skill — incl. `authoring-extensions.md`: **how to add a skill / agent / command / hook to this repo** (read it before extending `.claude/`) |
 | `.claude/memory/roadmap.md` | living backlog / future scope / TODOs |
 | `.claude/memory/policy/` | governance canon — `data-governance.md` (datasets/labels/licensing/PII), `model-governance.md` (reproducibility, model cards), `security.md` (secrets, logging/egress, threat model) |
 
