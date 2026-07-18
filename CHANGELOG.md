@@ -6,6 +6,13 @@ versions follow [SemVer](https://semver.org/) per the stability contract in
 `.claude/scaffold-version` stamp against these entries to see what they're missing — and run
 `/upgrade` to apply the delta safely.
 
+> **Pre-1.0 renumbering (2026-07-18):** eight same-day releases (old v0.4.0–v0.11.0) were
+> consolidated into the four feature releases below, before any 1.0 stability promise. Commits
+> were never rewritten — only tags and release notes moved. If a `.claude/scaffold-version`
+> stamp names an old number: 0.4 → 0.4 · 0.5/0.6/0.7 → 0.5 · 0.8/0.9 → 0.6 · 0.10/0.11 → 0.7 —
+> and the stamp's commit **sha** remains the precise reference (`/upgrade`'s three-way logic
+> keys on the sha, not the number).
+
 ## [Unreleased]
 
 ### Changed
@@ -29,12 +36,12 @@ versions follow [SemVer](https://semver.org/) per the stability contract in
   regenerates and diffs it, so the index structurally cannot drift (skips silently in installed
   projects, which don't receive `docs/`).
 
-## [0.11.0] — 2026-07-18
+## [0.7.0] — 2026-07-18
 
-The lifecycle pass — the 1.0 runway. The scaffold can now keep its installed copies current,
-its own checker catches the bug classes that actually shipped, and SemVer means something
-specific. What remains before 1.0 is not a feature: it's a real project run through the
-scaffold end to end.
+The hardening & lifecycle release: an 11-dimension, adversarially-verified audit of the whole
+scaffold (58 agents; 45 confirmed findings, 0 refuted) with every finding fixed — plus the
+machinery that keeps installed copies current: `/upgrade`, a checker that catches the bug
+classes that actually shipped, and a written stability contract.
 
 ### Added
 - **`/upgrade`** — upgrades an installed project's scaffold: reads the `.claude/scaffold-version`
@@ -47,11 +54,6 @@ scaffold end to end.
   must carry `disable-model-invocation: true`. Negative-tested against a planted invalid file.
 - **Stability contract** (CONTRIBUTING.md) — what breaking/additive/patch mean for a scaffold's
   interfaces; post-1.0, breaking changes ship migration notes and `/upgrade` does the mechanics.
-
-## [0.10.0] — 2026-07-18
-
-The audit pass: an 11-dimension, adversarially-verified sweep of the whole scaffold (58 agents;
-45 confirmed findings, 0 refuted) with every finding fixed. Also ships the resource matrix.
 
 ### Fixed
 - **Two invalid YAML frontmatters** (`/intake`'s colon-bearing description, `/report`'s double
@@ -78,37 +80,12 @@ The audit pass: an 11-dimension, adversarially-verified sweep of the whole scaff
 - **Release tags v0.4.0–v0.9.0 re-created as annotated** so `git describe` reports the true
   version (they were lightweight; v0.1–v0.3 were annotated).
 
-### Added
-- **Resource matrix** (`.claude/memory/process/resources.md`, shipped as a seed) — the single
-  inventory of every service/store/endpoint a project touches: endpoint, env keys, credential
-  *by reference* (never values), owner skill, backup status. The rule: provisioning anything
-  updates the matrix **and `.env.example` in the same commit** — the two must agree. Written by
-  the infra lanes (`infra-aws`, `local-stack`, `containers`, `serving`) and seeded by
-  `/bootstrap`; CVAT's S3-compatible storage need is the motivating case (one MinIO bucket,
-  recorded once, consumed by DVC and CVAT both).
+## [0.6.0] — 2026-07-18
 
-## [0.9.0] — 2026-07-18
-
-The self-hosted pass: offline/air-gapped twins of the cloud pieces. Because everything
-S3-compatible takes an endpoint override, the existing DVC/MLflow/boto3 workflows run unchanged
-against local services — only the endpoints move.
-
-### Added
-- **`local-stack`** (lane, off; flips `containers` with it) — the self-hosted service catalog:
-  **MinIO** as S3-compatible blob storage (endpoint-url wiring for DVC remotes / MLflow
-  artifacts / boto3; credentials via `dvc remote modify --local`, never committed; per-bucket
-  versioning), **CVAT** self-hosted for annotation (pinned release tag, shared-storage mount so
-  datasets don't upload through the browser, export-to-COCO-immediately per the `annotation`
-  discipline), **local Postgres** (init scripts so a fresh `compose up` reproduces the database
-  shape, healthchecks), and the **extension matrix** (pgvector / TimescaleDB / PostGIS / Apache
-  AGE — one prebuilt image per family; combining is a deliberate custom image), plus the
-  backups-are-now-your-job rule.
-
-## [0.8.0] — 2026-07-18
-
-The infrastructure pass: the scaffold learns to manage the infrastructure under the pipelines —
-through a boundary it cannot widen. AWS-first, Docker over Kubernetes, and the repo's
-guardrails-vs-boundary security model extended to the cloud.
+The infrastructure release: the scaffold manages the infrastructure under the pipelines —
+through boundaries it cannot widen. AWS behind a least-privilege IAM role, Docker/Compose over
+Kubernetes, self-hosted offline twins of every cloud piece, and one resource matrix recording
+where everything is accessed.
 
 ### Added
 - **`infra-aws`** (lane, off) — S3 + Redshift via the AWS CLI/boto3, acting through a dedicated
@@ -127,61 +104,30 @@ guardrails-vs-boundary security model extended to the cloud.
 - **Security canon**: "Cloud credentials & the IAM boundary" — the agent acts through the scoped
   role, never a human admin profile; credentials stay in the credential store; CloudTrail +
   bucket versioning as part of least privilege.
-
-## [0.7.0] — 2026-07-18
-
-The end-to-end pass: audited against what commercial DS agents (NL-to-SQL, warehouse work,
-ad-hoc file analysis) and autonomous-ML benchmarks cover. Four new lane skills close the
-acquisition and shipping ends of the lifecycle, and the process gains an ad-hoc exemption so
-quick analysis never meets gate ceremony.
-
-### Added
-- **`sql`** (lane) — query-for-features discipline: push compute down, leakage-safe window
-  frames (`1 PRECEDING`), join-grain checks, parametrized queries, snapshot what training eats.
-- **`data-acquisition`** (lane) — cache-first raw layer, rate-limit budget math before pulling,
-  backoff with jitter, incremental sync, boundary schema validation, ToS/robots as governance.
-- **`serving`** (lane, flips at deploy) — batch-first bias, load-once-from-registry-alias
-  endpoint shape, training-serving skew prevention, export parity checks, prediction logging as
-  the `monitoring` precondition.
-- **`wrangling`** (lane) — pandas without silent corruption: `validate=` on every merge +
-  grain assertions, tz-aware UTC at the boundary, dtype traps, vectorization,
-  order-is-not-a-contract.
-
-### Changed
-- **Ad-hoc mode:** the `process` skill (and CLAUDE.md) now state that gates govern *project*
-  work — "plot this CSV" is served directly with no phase ceremony, entering the process only
-  when it starts informing project decisions.
-- **`evaluation`:** fairness slices are required, not optional, when predictions affect people;
-  gaps go in the model card, and slice findings pass multiple-comparisons discipline.
-
-## [0.6.0] — 2026-07-18
-
-The communication pass: the workflow arc now runs end to end — understand the data before
-modeling it, and turn the result into an evidence-cited deliverable at the far side. Four new
-always-on workflow skills plus `/report`.
-
-### Added
-- **`eda`** — disciplined exploration: the first-look checklist, split-aware EDA (modeling
-  decisions from train only), leakage-hunting, image-data EDA (sample grids, label overlays);
-  findings land in P2's data-quality notes / risk register / feature dictionary, not a
-  scrolled-past notebook.
-- **`visualization`** — charts as evidence: chart-for-question mapping, honesty rules
-  (bars-from-zero, shared axes, intervals + n on every estimate), perceptual rules
-  (viridis-family, colorblind-safe), figures-as-code logged to the tracker, and the standard
-  diagnostics set per task.
-- **`statistics`** — what "evidence" means: seed variance as the noise floor (≥3 seeds,
-  mean ± sd), bootstrap CIs, can-the-test-set-resolve-the-claim arithmetic, paired model
-  comparisons, A/B test basics, multiple-comparisons discipline for slice scans.
-- **`reporting` + `/report`** — deliverables (technical report, white paper, stakeholder
-  summary, model card) assembled from the repo's own records: T1 problem statement, decision
-  log, tracker runs, session notes. Every claim cites a run id; evidence gaps become
-  `[TODO: evidence]`, never plausible numbers.
+- **`local-stack`** (lane, off; flips `containers` with it) — the self-hosted service catalog:
+  **MinIO** as S3-compatible blob storage (endpoint-url wiring for DVC remotes / MLflow
+  artifacts / boto3; credentials via `dvc remote modify --local`, never committed; per-bucket
+  versioning), **CVAT** self-hosted for annotation (pinned release tag, shared-storage mount so
+  datasets don't upload through the browser, export-to-COCO-immediately per the `annotation`
+  discipline), **local Postgres** (init scripts so a fresh `compose up` reproduces the database
+  shape, healthchecks), and the **extension matrix** (pgvector / TimescaleDB / PostGIS / Apache
+  AGE — one prebuilt image per family; combining is a deliberate custom image), plus the
+  backups-are-now-your-job rule.
+- **Resource matrix** (`.claude/memory/process/resources.md`, shipped as a seed) — the single
+  inventory of every service/store/endpoint a project touches: endpoint, env keys, credential
+  *by reference* (never values), owner skill, backup status. The rule: provisioning anything
+  updates the matrix **and `.env.example` in the same commit** — the two must agree. Written by
+  the infra lanes (`infra-aws`, `local-stack`, `containers`, `serving`) and seeded by
+  `/bootstrap`; CVAT's S3-compatible storage need is the motivating case (one MinIO bucket,
+  recorded once, consumed by DVC and CVAT both).
 
 ## [0.5.0] — 2026-07-18
 
-The comprehensiveness pass: the scaffold now serves the general-DS archetypes, not just CV.
-Introduces **lane skills** — workflow skills gated by project archetype through the same
-`skillOverrides` mechanism as tool skills, so users only pay context for the lanes they work in.
+The full-lifecycle release: the scaffold becomes a general **data-science** platform. Archetypes
+are lanes (tabular, time-series, LLM, SQL, serving — flipped by what you're building, so nobody
+pays context for someone else's domain), and the workflow arc runs end to end: understand the
+data first (`eda`), through modeling, to evidence-cited deliverables (`/report`). Ad-hoc asks
+("plot this CSV") skip all process ceremony.
 
 ### Added
 - **`tabular`** (lane, off) — sklearn-lane discipline: all preprocessing inside
@@ -197,11 +143,41 @@ Introduces **lane skills** — workflow skills gated by project archetype throug
 - **`config-omegaconf`** (tool, off) — plain-OmegaConf composition without Hydra: schema-first
   merge, dotlist CLI overrides, `MISSING`, resolve-and-log. Closes `/intake`'s
   "no skill backs this choice" warning.
+- **`eda`** — disciplined exploration: the first-look checklist, split-aware EDA (modeling
+  decisions from train only), leakage-hunting, image-data EDA (sample grids, label overlays);
+  findings land in P2's data-quality notes / risk register / feature dictionary, not a
+  scrolled-past notebook.
+- **`visualization`** — charts as evidence: chart-for-question mapping, honesty rules
+  (bars-from-zero, shared axes, intervals + n on every estimate), perceptual rules
+  (viridis-family, colorblind-safe), figures-as-code logged to the tracker, and the standard
+  diagnostics set per task.
+- **`statistics`** — what "evidence" means: seed variance as the noise floor (≥3 seeds,
+  mean ± sd), bootstrap CIs, can-the-test-set-resolve-the-claim arithmetic, paired model
+  comparisons, A/B test basics, multiple-comparisons discipline for slice scans.
+- **`reporting` + `/report`** — deliverables (technical report, white paper, stakeholder
+  summary, model card) assembled from the repo's own records: T1 problem statement, decision
+  log, tracker runs, session notes. Every claim cites a run id; evidence gaps become
+  `[TODO: evidence]`, never plausible numbers.
+- **`sql`** (lane) — query-for-features discipline: push compute down, leakage-safe window
+  frames (`1 PRECEDING`), join-grain checks, parametrized queries, snapshot what training eats.
+- **`data-acquisition`** (lane) — cache-first raw layer, rate-limit budget math before pulling,
+  backoff with jitter, incremental sync, boundary schema validation, ToS/robots as governance.
+- **`serving`** (lane, flips at deploy) — batch-first bias, load-once-from-registry-alias
+  endpoint shape, training-serving skew prevention, export parity checks, prediction logging as
+  the `monitoring` precondition.
+- **`wrangling`** (lane) — pandas without silent corruption: `validate=` on every merge +
+  grain assertions, tz-aware UTC at the boundary, dtype traps, vectorization,
+  order-is-not-a-contract.
 
 ### Changed
 - `/intake`: lane skills flip from the step-0 archetype with no extra questions; the plain-
   OmegaConf option is now fully backed (the Hydra-shaped-skeleton caveat remains).
 - `settings.json` `skillOverrides` + CLAUDE.md/README document the tool-vs-lane distinction.
+- **Ad-hoc mode:** the `process` skill (and CLAUDE.md) now state that gates govern *project*
+  work — "plot this CSV" is served directly with no phase ceremony, entering the process only
+  when it starts informing project decisions.
+- **`evaluation`:** fairness slices are required, not optional, when predictions affect people;
+  gaps go in the model card, and slice findings pass multiple-comparisons discipline.
 
 ## [0.4.0] — 2026-07-18
 
