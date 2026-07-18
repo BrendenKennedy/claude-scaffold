@@ -25,7 +25,7 @@ written gate + a decision-log line.
 ## Done (recent)
 - `SessionStart` orientation hook + "finish before handing back" DoD convention — the completion
   contract (mechanical + judgment halves); no orchestrator agent — 2026-07-18,
-  [session note](sessions/2026-07-18-session-start-orientation.md), branch `session-start-orientation`.
+  [session note](sessions/2026-07-18-session-start-orientation.md), branch `session-start-orientation`, commit `e5c8083`.
   (Superseded the old "Stop-hook gate-debt warning" idea — Stop is per-turn.)
 - Release v0.11.0: lifecycle pass (/upgrade, check-scaffold 2b, stability contract) — 2026-07-18
 - Release v0.10.0: audit pass (58-agent adversarially-verified sweep, 45 findings fixed) + resource matrix — 2026-07-18

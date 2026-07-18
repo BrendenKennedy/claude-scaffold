@@ -47,6 +47,6 @@ definition-of-done.
 - `/upgrade` path: installed projects get the new hook via the three-way file plan (new file = ADD) → ../roadmap.md
 
 ## Related
-- Branch: `session-start-orientation`
+- Branch: `session-start-orientation` · commit `e5c8083`
 - Builds on: [architecture-skills-vs-agents](../reference/architecture-skills-vs-agents.md) (why no agent),
   [process-and-efficiency](2026-07-18-process-and-efficiency.md) (the operating loop this bookends)
