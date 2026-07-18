@@ -3,11 +3,11 @@ description: One-time project bootstrap — generate the conf/ tree and the trai
 disable-model-invocation: true
 ---
 
-Create the project skeleton this scaffold's skills already describe. (The generator currently
-emits the deep-learning/Hydra shape — other archetype skeletons are a roadmap item; for tabular/
-timeseries projects, generate the entry points by hand from those skills' conventions.) `/intake` picks the **stack**; this
-picks the **shape**. Until it runs, `config-hydra` documents a `conf/` tree that doesn't exist, `training`
-documents a `train.py` that doesn't exist, and "config over constants" governs nothing.
+Create the project skeleton this scaffold's skills already describe — **archetype-aware**:
+deep-learning/CV (§3, with anomaly-detection and pipeline variants), tabular (§3e), time-series
+(§3f), and LLM fine-tuning (§3g). `/intake` picks the **stack**; this picks the **shape**. Until it
+runs, `config-hydra` documents a `conf/` tree that doesn't exist, the lane skills document entry
+points that don't exist, and "config over constants" governs nothing.
 
 Run it **after** `/intake`, **once**, on a fresh scaffold. Throughout, `<pkg>` means the project's Python
 package under `src/` (read it from `pyproject.toml` — do not invent one).
@@ -19,15 +19,23 @@ The skeleton's shape depends on the task; don't guess it. **First read
 implications** section may already answer the questions below; present those as pre-selected
 options to confirm, don't re-ask blind. Then ask, batched into one call:
 
-- **CV task** — image classification *(default)* / object detection / semantic segmentation /
-  **anomaly detection** (industrial defect finding) / **a multi-stage pipeline** (localize the item, then
-  judge it — e.g. detect the part, then run anomaly detection on the crop). This decides the model, the
-  loss, the metric, the label format, and — for anomaly detection and pipelines — the entire data and
-  training shape. If the answer is a pipeline, **load the `pipelines` skill** and see step 3c.
-- **Dataset name** — the short slug used for `conf/dataset/<name>.yaml` and `data/<name>/`. This is the value
-  `/intake` had to leave as a `<PLACEHOLDER>` in `config-hydra`, `datasets`, and `data-dvc`.
-- **Model/backbone to start from** — e.g. `resnet18` (torchvision). For anomaly detection, ask which
-  **method family** instead (see step 3b) — it changes whether there's a training loop at all.
+- **Archetype** (from the definition doc — confirm, don't re-derive): **deep-learning / CV**
+  *(default)* · **tabular** · **time-series** · **LLM fine-tuning**. This selects the entire
+  skeleton: CV/DL → the remaining questions here + §3; tabular → §3e (its own questions:
+  target column, optional group column, classification vs regression); time-series → §3f
+  (time column, target, horizon + frequency, seasonal period, optional series-id); LLM → §3g
+  (base model, data path).
+- **Dataset name** (all archetypes) — the short slug used for `conf/dataset/<name>.yaml` and
+  `data/<name>/`. This is the value `/intake` had to leave as a `<PLACEHOLDER>` in
+  `config-hydra`, `datasets`, and `data-dvc`.
+- **CV task** (CV/DL lane only) — image classification *(default)* / object detection / semantic
+  segmentation / **anomaly detection** (industrial defect finding) / **a multi-stage pipeline**
+  (localize the item, then judge it). This decides the model, the loss, the metric, the label
+  format, and — for anomaly detection and pipelines — the entire data and training shape. If the
+  answer is a pipeline, **load the `pipelines` skill** and see step 3c.
+- **Model/backbone to start from** (CV/DL lane only) — e.g. `resnet18` (torchvision). For anomaly
+  detection, ask which **method family** instead (see step 3b) — it changes whether there's a
+  training loop at all.
 
 If the user doesn't know the dataset yet, use `example` with `synthetic: true` and say so in the report — a
 config group that runs on random tensors beats a placeholder that runs on nothing.
@@ -48,10 +56,15 @@ it and follow it; if this command and a skill ever disagree, **the skill wins**:
 | `eval.py` — deterministic eval, metric choice | `evaluation` |
 | tracker calls inside both entry points | the tracking skill that `/intake` turned on |
 | splits, label format, `SPLIT_SEED` | `datasets` |
+| the tabular skeleton (§3e) — pipelines, CV strategy, persistence | `tabular` (+ `wrangling` for frame handling) |
+| the time-series skeleton (§3f) — backtest, causal features, baselines | `timeseries` |
+| the LLM skeleton (§3g) — SFT shape, decontamination, golden prompts | `finetune-unsloth` + `llm-eval` |
 | the tests that prove it works | `testing` |
 
 ## 3. Generate the skeleton
 
+The tree below is the **deep-learning/CV shape**; §3e–§3g replace it per archetype. §3a
+(structure-not-a-dataset), §3d (delivery templates), and §4–§6 apply to **every** archetype.
 Every path below is named in a skill — this is the layout they refer to, so **changing a path here means
 updating that skill in the same commit**.
 
@@ -182,6 +195,69 @@ unignored `.env` is a credential leak waiting to happen). Then seed the **resour
 and the tracker (env keys, credential references) — replacing the illustrative rows; the matrix
 and `.env.example` stay in sync from this moment on. Report each instantiated file in §7.
 
+### 3e. Tabular archetype — the sklearn shape (no torch anywhere)
+
+**Load `tabular` + `wrangling` first** (splits stay `datasets`' discipline). Do not copy DL keys
+that mean nothing here — no `device`, `ckpt`, `resume`, AMP, or scheduler groups; the persistence
+story is a joblib round-trip, not checkpoints.
+
+```
+conf/
+  config.yaml              # seed, experiment, run_name, tracking.uri, target, cv.folds, defaults
+  model/hist_gbm.yaml      # HistGradientBoosting* — the boosting default with zero extra deps
+  model/logreg.yaml        # the interpretable rung of the ladder (baselines are gates)
+  dataset/<name>.yaml      # path: ${oc.env:DATA_ROOT}/<name>.parquet · synthetic: true|false ·
+                           #   target / group / categorical / numeric columns — config, not literals
+src/<pkg>/
+  env.py · seed.py         # same contracts as the DL shape
+  data/load.py             # frame loading + the synthetic frame (mixed dtypes, group col, target)
+  data/splits.py           # SPLIT_SEED; group-aware manifest — the group column never straddles splits
+  pipeline.py              # build_pipeline(cfg) -> sklearn Pipeline (ColumnTransformer + model);
+                           #   ALL learned preprocessing lives inside it — the leakage armor
+  train.py                 # fit on train, score val, log to tracker — and compute + log the Dummy
+                           #   baseline AUTOMATICALLY every run; a number without its floor is noise
+  eval.py                  # loads models/model.joblib, scores the untouched holdout ONCE
+models/model.joblib        # pipeline + model persisted as ONE artifact; sklearn version recorded
+```
+
+### 3f. Time-series archetype — the backtest IS the skeleton
+
+**Load `timeseries` first** (the regressor mechanics may borrow `tabular`). Non-negotiables: no
+shuffled split exists anywhere in this shape; MASE is baked in so every result is read against
+the naive gates.
+
+```
+conf/config.yaml           # seed, horizon, freq, season, backtest: {n_origins, gap}
+conf/dataset/<name>.yaml   # time / target / series-id columns · synthetic: true|false
+src/<pkg>/
+  data/load.py             # parse tz-aware UTC at the boundary; sort by time — order is not a contract
+  data/splits.py           # rolling-origin manifest with an EMBARGO GAP >= the longest feature window
+  features.py              # causal lags/rolling ONLY — shift(1) before any rolling op, enforced by test
+  baselines.py             # naive + seasonal-naive — the gates every model must beat (MASE < 1)
+  train.py                 # fit per origin, aggregate MASE/sMAPE across origins vs BOTH baselines
+  eval.py                  # final holdout = the most recent horizon-length window, touched once
+```
+The synthetic series is trend + seasonality + noise — so the seasonal-naive baseline is
+non-trivial and the proof run means something.
+
+### 3g. LLM fine-tuning archetype — data + eval harness now, training when the GPU arrives
+
+**Load `finetune-unsloth` + `llm-eval` first.** This lane's bootstrap deliberately emits only the
+parts provable **without** a GPU or the heavy deps — a fabricated "training success" on CPU would
+be a lie, and this command doesn't lie in its §7 report.
+
+```
+conf/config.yaml           # seed, base_model, max_seq_length, data paths, lora: {r, alpha, ...}
+src/<pkg>/
+  data/prep.py             # jsonl chat records -> template-applied text; train/eval split with
+                           #   DECONTAMINATION (exact + n-gram overlap) — this lane's leakage
+  train_sft.py             # the Unsloth + TRL shape per the skill, import-guarded: if unsloth is
+                           #   absent it exits with the install pointer — never a fabricated fallback
+  eval_golden.py           # golden-prompt regression harness: fixed prompts + expected checks,
+                           #   deterministic decoding params from config
+golden/prompts.jsonl       # the golden set — versioned with the data (data-dvc)
+```
+
 ## 4. Never clobber (but *do* extend)
 
 Before **creating** a file: if it already exists and is non-empty, **stop and ask** — do not overwrite. This
@@ -214,6 +290,17 @@ Per `testing`, a green-looking command that never ran is worse than no test. Run
    struct-mode keys, device mismatch). A skeleton whose checkpoints can't be *read* is not a working skeleton.
 5. **Resume, for real:** re-run train from `last.pt`. It's the one path where a wrong `weights_only` or
    RNG-restore bug hides until the day you actually need it.
+6. **Archetype variants of 3–5:**
+   - **Tabular (§3e):** fit on the synthetic frame → reload `models/model.joblib` → eval-once path.
+     The leakage test asserts the pipeline's learned statistics come from **train only** (fit on
+     train, verify val transforms use train-fit parameters), and that the group column never
+     straddles splits.
+   - **Time-series (§3f):** run ≥2 backtest origins for real; report vs BOTH baselines; the
+     **causality test** asserts every feature at time *t* is computable from data strictly before
+     *t* (perturb the future, features must not change).
+   - **LLM (§3g):** data-path proof only — prep round-trips a synthetic jsonl, decontamination
+     catches a planted duplicate, the golden harness dry-runs against a stub scorer. Training
+     proof is **deferred to the first real run — state this loudly in §7**; do not simulate it.
 
 ## 6. Back-fill the now-answerable placeholders
 

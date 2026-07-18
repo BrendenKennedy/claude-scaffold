@@ -89,8 +89,10 @@ flowchart LR
 | **Memory** | Session notes, roadmap, scaffold journal, policy canon, live process state — pulled on demand, never auto-loaded. |
 
 Stack defaults: `uv` · MLflow · Hydra · DVC — swappable at `/intake`. No archetype is
-privileged (one caveat: `/bootstrap`'s generated skeleton is currently the deep-learning
-shape; other archetype skeletons are on the roadmap).
+privileged: `/bootstrap` generates archetype-matched skeletons — deep-learning/CV (incl.
+anomaly-detection and cascade variants), tabular (sklearn pipelines + joblib), time-series
+(rolling-origin backtest + naive baselines built in), and the LLM lane's data-prep + golden-
+prompt eval harness.
 
 ## Daily usage
 

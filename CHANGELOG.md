@@ -13,21 +13,23 @@ versions follow [SemVer](https://semver.org/) per the stability contract in
 > and the stamp's commit **sha** remains the precise reference (`/upgrade`'s three-way logic
 > keys on the sha, not the number).
 
-## [Unreleased]
+## [0.8.0] — 2026-07-18
 
-### Changed
-- **CV is now a lane, not the default identity.** The scaffold is a *data-science* scaffold;
-  archetypes (CV · tabular · time-series · LLM · …) are peer lanes flipped by `/intake`. The
-  CV-specific skills (`annotation`, `pipelines`, `training` — the last flips for any
-  neural-training archetype) moved from always-on to lane-gated; the always-on workflow tier is
-  now the archetype-agnostic DS core (`datasets`, `eda`, `evaluation`, `statistics`,
-  `visualization`, `notebooks`, `reporting`). `datasets` reframed: universal split/provenance
-  discipline headline, CV formats as its CV section. Agents follow (`data-engineer`
-  generalized; `ml-engineer` no longer preloads the now-gated `training` — reads it per
-  `skillOverrides`). README/CLAUDE.md/tutorial identity surfaces updated; `/bootstrap` honestly
-  notes its generated skeleton is currently the deep-learning shape.
+The multi-archetype release: `/bootstrap` now generates the skeleton your archetype actually
+needs — no lane is privileged anywhere in the scaffold anymore. Plus the repositioning that
+motivated it, the docs layer, and the scaffold's own self-assessment loop.
 
 ### Added
+- **Multi-archetype `/bootstrap` skeletons** — the generator now matches the project's archetype
+  instead of assuming deep learning: **tabular** (§3e — sklearn `Pipeline`/`ColumnTransformer` as
+  leakage armor, group-aware splits, an auto-logged Dummy baseline every run, joblib persistence),
+  **time-series** (§3f — rolling-origin backtest with embargo gaps as the skeleton's spine, causal
+  lag features enforced by a causality test, naive/seasonal-naive baselines baked into MASE),
+  and **LLM fine-tuning** (§3g — data prep with decontamination, an import-guarded Unsloth+TRL
+  entry point, a golden-prompt eval harness; only the GPU-free parts are claimed as proven —
+  training proof is honestly deferred). The interview is archetype-first (confirmed from the
+  definition doc), each lane's proof step runs for real on synthetic data, and the last
+  CV-privileged surface in the scaffold is gone.
 - **Scaffold self-assessment loop** — the tooling's meta-loop, mirroring PROCESS.md Part V (which
   versions the *methodology*): `.claude/memory/scaffold-journal.md` records how the `.claude/` config
   performs in use (wins / friction / coordination-gaps / missing-features), the `memory` skill's
@@ -54,14 +56,18 @@ versions follow [SemVer](https://semver.org/) per the stability contract in
   regenerates and diffs it, so the index structurally cannot drift (skips silently in installed
   projects, which don't receive `docs/`).
 
-### Fixed
-- **`install.sh` no longer ships this repo's own memory *content* into fresh projects.** It was
-  copying the scaffold-maker's dated session notes, dev roadmap (release history), and
-  scaffold-journal entries into every installed project — confusing clutter in a stranger's repo.
-  Now it ships **empty stores**: blank `roadmap.md` + `scaffold-journal.md` seeded from
-  `.claude/templates/memory/`, and `sessions/` with only its README + template. The structural
-  templates (`process/`, `reference/`, `policy/`) still ship as before. `check-scaffold`'s
-  file-count check updated to match.
+### Changed
+- **CV is now a lane, not the default identity.** The scaffold is a *data-science* scaffold;
+  archetypes (CV · tabular · time-series · LLM · …) are peer lanes flipped by `/intake`. The
+  CV-specific skills (`annotation`, `pipelines`, `training` — the last flips for any
+  neural-training archetype) moved from always-on to lane-gated; the always-on workflow tier is
+  now the archetype-agnostic DS core (`datasets`, `eda`, `evaluation`, `statistics`,
+  `visualization`, `notebooks`, `reporting`). `datasets` reframed: universal split/provenance
+  discipline headline, CV formats as its CV section. Agents follow (`data-engineer`
+  generalized; `ml-engineer` no longer preloads the now-gated `training` — reads it per
+  `skillOverrides`). README/CLAUDE.md/tutorial identity surfaces updated. (The interim
+  deep-learning-only `/bootstrap` caveat this repositioning introduced was closed within this
+  same release by the multi-archetype skeletons above.)
 
 ## [0.7.0] — 2026-07-18
 

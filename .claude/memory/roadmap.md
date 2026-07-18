@@ -19,13 +19,13 @@ written gate + a decision-log line.
   forms. Watch that the wrapup check doesn't decay into rote "none" (capture-the-moment is the real path)
 
 ## Someday / maybe
-- Multi-archetype `/bootstrap` skeletons (tabular/timeseries/LLM entry points — the skills now exist; the skeleton is still Hydra+CV-shaped)
 - Causal inference skill (observational methods beyond A/B — DoWhy/propensity) — when demand shows
 - Big-data escalation skills (polars/duckdb/spark) — when demand shows
 - Kubernetes manager, SageMaker/EC2 surface for `infra-aws`, GCP/Azure lanes — parked on demand (AWS S3+Redshift + Docker/Compose shipped in v0.8.0)
 - Data-validation tool skill (pandera/great-expectations)
 
 ## Done (recent)
+- Multi-archetype `/bootstrap` skeletons (tabular §3e, time-series §3f, LLM data+eval §3g) — 2026-07-18, v0.8.0
 - Ship clean memory stores — `install.sh` no longer copies this repo's dev session notes / roadmap /
   journal into fresh projects; seeds blank stores from `templates/memory/` — 2026-07-18,
   [session note](sessions/2026-07-18-ship-clean-stores.md), branch `ship-clean-stores`, commit `c42ea74`.

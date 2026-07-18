@@ -23,13 +23,13 @@ definition only on a genuine pivot, which also means a decision-log entry.)
   decision it changes. Reflect it back and get a "yes, that's it."
 - **Classify the archetype** (AskUserQuestion once you have context): computer vision · classical
   DS on structured/tabular data · time-series/forecasting · NLP / LLM application · AI agent build ·
-  autonomous systems/robotics · analytics & reporting. **Be honest about lane fit, out loud:** this
-  scaffold is CV/DS-tuned. The chassis (`process`, `memory`, `governance`, `testing`,
-  `wave-planning`) and the PROCESS.md phases are archetype-agnostic — an agent build still has data
-  discovery, baselines, and eval — but the workflow skills (`datasets`, `training`, `evaluation`,
-  `pipelines`, `annotation`) and `/bootstrap`'s skeleton are CV-shaped. State exactly what fits and
-  what doesn't, and ask whether to proceed with the gaps recorded — never silently pretend the CV
-  skills cover an out-of-lane build.
+  autonomous systems/robotics · analytics & reporting. **Be honest about lane fit, out loud:** the
+  chassis, the DS-core workflow skills, and the PROCESS.md phases are archetype-agnostic, and the
+  CV / tabular / time-series / LLM archetypes have full lanes plus `/bootstrap` skeletons. Out of
+  lane (agent builds, autonomous systems, pure analytics): the chassis still holds — an agent build
+  still has data discovery, baselines, and eval — but no lane skills or skeleton back it. State
+  exactly what fits and what doesn't, and ask whether to proceed with the gaps recorded — never
+  silently pretend covered.
 - **Fill T1 conversationally:** prediction target · consumer & the decision it changes ·
   constraints (deadline, data access, budget, and the **compute math** — est. cost of one training
   run × runs implied, vs. hardware and deadline) · success metric + threshold + the baseline it
