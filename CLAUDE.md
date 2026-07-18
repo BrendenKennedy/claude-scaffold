@@ -28,6 +28,9 @@ The rules that apply to essentially every change (fuller policy via the `governa
 - **Deps via `uv add`** — never hand-edit `pyproject.toml` (the `guard-pyproject` hook enforces).
 - **Don't hand-format** — the ruff hooks own style. Bite: `ruff check --fix` runs after *every*
   Edit/Write, so write an import and its usage in the **same** edit or F401 deletes it between.
+- **Terse working output** — status updates and findings, not narration; every reply becomes
+  context re-read on all later turns, so brevity compounds. Full prose belongs only in
+  deliverables (reports, gate reviews, explanations the user asked for).
 
 ## Skills — `.claude/skills/<name>/SKILL.md`
 Auto-surface by description (that text is the entire routing surface — see
