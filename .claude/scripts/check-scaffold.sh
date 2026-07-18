@@ -177,6 +177,22 @@ while IFS= read -r f; do
 done < <(grep -rl --exclude-dir=__pycache__ '<PLACEHOLDER' .claude CLAUDE.md README.md 2>/dev/null)
 [ "$unowned" -eq 0 ] && ok "ownership: every placeholder-carrying file is claimed by /intake or /bootstrap"
 
+# ---- 6. REFERENCE INDEX -----------------------------------------------------
+# docs/REFERENCE.md is generated from frontmatter; a hand-edit or a frontmatter change without a
+# regen makes it lie. Rebuild to a temp file and diff. docs/ is the scaffold repo's own (not
+# shipped by install.sh), so in an installed project this check skips silently — the scaffold
+# repo is recognizable by install.sh at its root.
+if [ -f docs/REFERENCE.md ]; then
+  python3 .claude/scripts/build-reference.py "$tmp/REFERENCE.md" >/dev/null 2>&1
+  if ! diff -q docs/REFERENCE.md "$tmp/REFERENCE.md" >/dev/null 2>&1; then
+    fail "docs/REFERENCE.md is stale — regenerate: python3 .claude/scripts/build-reference.py"
+  else
+    ok "reference: docs/REFERENCE.md matches the frontmatter (regenerated + diffed)"
+  fi
+elif [ -f install.sh ]; then
+  fail "docs/REFERENCE.md missing — generate: python3 .claude/scripts/build-reference.py"
+fi
+
 # ---- verdict ----------------------------------------------------------------
 echo
 if [ "$fails" -gt 0 ]; then

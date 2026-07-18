@@ -6,6 +6,17 @@ versions follow [SemVer](https://semver.org/) per the stability contract in
 `.claude/scaffold-version` stamp against these entries to see what they're missing — and run
 `/upgrade` to apply the delta safely.
 
+## [Unreleased]
+
+### Added
+- **`docs/TUTORIAL.md`** — the hands-on first-project walkthrough (~30 min, runs on synthetic
+  data): install → `/setup`'s four stages → bringing data → the daily rhythm (expect your first
+  BLOCKED gate) → `/report` → maintenance.
+- **`docs/REFERENCE.md`** — the human-browsable index of every skill, command, agent, and hook —
+  **generated** from the frontmatter by `.claude/scripts/build-reference.py`; check-scaffold 6
+  regenerates and diffs it, so the index structurally cannot drift (skips silently in installed
+  projects, which don't receive `docs/`).
+
 ## [0.11.0] — 2026-07-18
 
 The lifecycle pass — the 1.0 runway. The scaffold can now keep its installed copies current,

@@ -53,6 +53,10 @@ Then, inside Claude Code:
 Or skip the clone: this is a GitHub template — hit **"Use this template"** to start a new project
 from it directly.
 
+**New here?** [docs/TUTORIAL.md](docs/TUTORIAL.md) walks the first project end to end (~30 min,
+runs on synthetic data — no dataset needed). [docs/REFERENCE.md](docs/REFERENCE.md) indexes every
+skill, command, agent, and hook, one line each — generated from the source, so it can't drift.
+
 ## How it works
 
 ```mermaid
