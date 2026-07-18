@@ -4,7 +4,7 @@
 # Usage:
 #   ./install.sh [TARGET_DIR]        # default TARGET_DIR is the current directory
 #
-# Copies .claude/ and CLAUDE.md into TARGET. NEVER overwrites an existing file —
+# Copies .claude/, CLAUDE.md, and PROCESS.md into TARGET. NEVER overwrites an existing file —
 # already-present files are reported and skipped, so it's safe to re-run.
 set -euo pipefail
 
@@ -28,7 +28,9 @@ echo
 copied=0
 skipped=0
 
-# Source set: every file under .claude/, plus the root CLAUDE.md.
+# Source set: every file under .claude/, plus the root CLAUDE.md and PROCESS.md
+# (the phase-gate framework the process skill + /gate run against — it lives at
+# the project root per its own Part 0 so retros version it with the project).
 while IFS= read -r src; do
   rel="${src#"$SCRIPT_DIR"/}"
   dest="$TARGET/$rel"
@@ -45,6 +47,7 @@ done < <(
   # Exclude bytecode: a dirty working tree (e.g. a compiled hook) must not ship .pyc into targets.
   find "$SCRIPT_DIR/.claude" -type f ! -name '*.py[co]' ! -path '*/__pycache__/*'
   echo "$SCRIPT_DIR/CLAUDE.md"
+  echo "$SCRIPT_DIR/PROCESS.md"
 )
 
 # Make hooks/scripts executable in the target (they're invoked directly).
@@ -62,13 +65,14 @@ echo "Stamped .claude/scaffold-version: $version ($sha)"
 
 echo
 echo "Done: $copied added, $skipped skipped (already present)."
-echo "Next (the first two are the setup, in order):"
-echo "  1. In Claude Code, run /intake — it interviews you for your stack (tracker/config/data"
-echo "     versioning), writes .claude/settings.json skillOverrides, and fills the stack placeholders."
-echo "  2. Run /bootstrap — it builds the project skeleton the skills describe (conf/ tree, train.py,"
-echo "     eval.py, seed helper) and back-fills the placeholders that need that code to exist."
-echo "     Until this runs, the skills document a project you don't have."
-echo "  3. Fill any remaining <PLACEHOLDER>s the two commands list (architecture doc, policy domains,"
+echo "Next: in Claude Code, run /setup — the whole sequence in one guided session"
+echo "(git preflight → /intake → /bootstrap → /gate P1 → /wrapup, checkpoint commits). Or piecewise:"
+echo "  1. /intake — the project-definition interview ('what are we building?'), then your stack"
+echo "     (tracker/config/data versioning) → skillOverrides + the stack placeholders."
+echo "  2. /bootstrap — builds the project skeleton the skills describe (conf/ tree, train.py,"
+echo "     eval.py, seed helper) and proves it runs. Until then the skills document a project"
+echo "     you don't have."
+echo "  3. Fill any remaining <PLACEHOLDER>s the setup commands list (architecture doc, policy domains,"
 echo "     data-remote URL) — those need your decisions, not an agent's guess."
 echo "  4. Edit .claude/settings.json permissions for this project's tools."
 echo "  5. Rename .claude/skills/_example and the *_TEMPLATE.md files as you build real ones."
