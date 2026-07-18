@@ -58,10 +58,9 @@ where the tool allows. The definition doc's **Setup implications** may already a
 present those as the pre-selected option and confirm, don't re-ask blind:
 
 - **Experiment tracker** — MLflow *(default)* / Weights & Biases / none.
-- **Config system** — Hydra *(default)* / plain OmegaConf / argparse. **Warn at selection time** if
-  the answer is plain OmegaConf: no dedicated skill backs it yet (fast-follow), so until it exists the
-  project has no config skill — and `/bootstrap`'s skeleton is Hydra-shaped. Put the same warning in
-  the option text itself, and restate it in the final report if chosen.
+- **Config system** — Hydra *(default)* / plain OmegaConf (backed by `config-omegaconf`; warn that
+  `/bootstrap`'s skeleton is Hydra-shaped, so its entry points need adapting to that skill's
+  pattern) / argparse (no skill backs argparse; config-over-constants still applies).
 - **Data versioning** — DVC *(default)* / git-lfs / none.
 - **Baseline confirm** — the scaffold assumes **uv** for envs and an **NVIDIA GPU** (local or over SSH).
   Confirm that holds, and ask whether the GPU box is **aarch64/ARM** (e.g. a Grace-Blackwell / DGX Spark)
@@ -93,12 +92,13 @@ Edit `.claude/settings.json` — set each key to `"on"` or `"off"` from the answ
 | `finetune-unsloth` | LLM fine-tuning = Unsloth |
 | `llm-eval` | LLM fine-tuning = Unsloth (flips with it) |
 | `hpo-optuna` | HPO = Optuna |
+| `tabular` | archetype = classical DS on structured data |
+| `timeseries` | archetype = time-series / forecasting |
+| `monitoring` | the project is deploying — usually flipped later, at P7, not at intake |
 
 Exactly one tracker key and one config key should be `on`; the unchosen siblings go `off`. If the tracker
-or data-versioning answer is "none", leave all keys in that group `off`. **Note:** the `config-omegaconf`
-skill is not authored yet — writing its override is a harmless no-op until it exists (fast-follow), so set
-it anyway, but the selection-time warning in step 1 is mandatory. (`tracking-wandb` IS authored — W&B is a
-fully backed choice.)
+or data-versioning answer is "none", leave all keys in that group `off`. **Lane skills flip from the
+archetype in the definition doc (step 0) — no extra question needed:**
 
 ## 3. Fill the answerable `<PLACEHOLDER>`s
 

@@ -28,7 +28,7 @@
     ],
     "_deny_comment": "The safety floor — secrets never enter the transcript. .env.example is deliberately NOT denied (it ships empty values and the skills read it for the expected keys); validate-bash.sh blocks shell reads of every other .env file. Full threat model: .claude/memory/policy/security.md."
   },
-  "_skillOverrides_comment": "Tool-skill on/off profile. `/intake` writes this — enable the tools you use, disable the rest. Workflow + chassis skills are always on and are NOT listed here.",
+  "_skillOverrides_comment": "Gated-skill on/off profile. `/intake` writes this — TOOL skills flip by stack choice, LANE skills flip by project archetype (tabular, timeseries, LLM, monitoring-at-deploy). Chassis + CV workflow skills are always on and are NOT listed here.",
   "skillOverrides": {
     "env-uv": "on",
     "tracking-mlflow": "on",
@@ -38,7 +38,10 @@
     "config-omegaconf": "off",
     "finetune-unsloth": "off",
     "llm-eval": "off",
-    "hpo-optuna": "off"
+    "hpo-optuna": "off",
+    "tabular": "off",
+    "timeseries": "off",
+    "monitoring": "off"
   },
   "hooks": {
     "PreToolUse": [

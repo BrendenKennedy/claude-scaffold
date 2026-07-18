@@ -248,6 +248,8 @@ project/
 
 **Purpose:** A model in a changing environment degrades by default; this phase makes degradation visible and actionable.
 
+**In this repo:** the `monitoring` skill carries the mechanics (prediction logging, PSI/KS drift stats, reference windows, retrain triggers, shadow eval) — flip it on in `skillOverrides` when deployment happens.
+
 **Key activities**
 - Monitor live performance on the Phase-1 metric
 - Detect input drift (feature distributions) and concept drift (relationship changes — e.g., a balance patch changes the game)

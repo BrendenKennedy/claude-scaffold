@@ -33,10 +33,12 @@ Auto-surface by description (that text is the entire routing surface — see
 - **Always-on chassis:** `process` · `governance` · `testing` · `memory` · `wave-planning`
 - **Always-on workflow (CV/DS):** `datasets` · `annotation` · `training` · `evaluation` ·
   `pipelines` · `notebooks`
-- **Tool-gated** (one tool each; `/intake` flips via `skillOverrides`): `env-uv` (on) ·
-  `tracking-mlflow` (on) · `config-hydra` (on) · `data-dvc` (on) · `tracking-wandb` (off) ·
-  `finetune-unsloth` (off) · `llm-eval` (off) · `hpo-optuna` (off). Each carries a `**Pinned:**`
-  version line — `/skill-update` keeps the facts true for the version the project actually runs.
+- **Gated** (`/intake` flips via `skillOverrides` — **tool** skills by stack choice, **lane**
+  skills by archetype; all off unless flipped): tools — `env-uv` (on) · `tracking-mlflow` (on) ·
+  `config-hydra` (on) · `data-dvc` (on) · `tracking-wandb` · `config-omegaconf` · `hpo-optuna`;
+  lanes — `tabular` · `timeseries` · `finetune-unsloth` · `llm-eval` · `monitoring` (flips at
+  first deploy). Tool skills carry a `**Pinned:**` version line — `/skill-update` keeps the facts
+  true for the version the project actually runs.
 
 ## Subagents — `.claude/agents/<name>.md`
 `code-reviewer` (diff review, ML lens) · `software-architect` (read-only planning, project

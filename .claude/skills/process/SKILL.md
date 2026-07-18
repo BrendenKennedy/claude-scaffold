@@ -54,7 +54,7 @@ description: >
 | P4 Features / input representation | `datasets` (preprocessing vs augmentation, stats-on-train-only), `config-hydra` (choices flow through config) |
 | P5 Modeling & evaluation | `training`, `evaluation`, `tracking-mlflow` (the experiment log **is** the tracker), `pipelines` for cascades, `testing` before claiming anything works |
 | P6 Delivery & retro | `testing` (clean rerun), `memory` (`/wrapup`), retro edits `PROCESS.md` |
-| P7 Monitoring | `evaluation` (drift = metrics over time), `tracking-mlflow` |
+| P7 Monitoring | `monitoring` (flip it on in `skillOverrides` at first deploy — drift, reference windows, retrain triggers), `evaluation`, the tracker + registry |
 
 ## Who runs this — deliberately NO project-manager agent
 Same design call as `governance`'s "no governance-manager agent": process is applied **where the work
