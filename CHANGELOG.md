@@ -1,8 +1,29 @@
 # Changelog
 
 All notable changes to claude-for-datascience. Format follows [Keep a Changelog](https://keepachangelog.com/);
-versions follow [SemVer](https://semver.org/). Installed projects can compare their
-`.claude/scaffold-version` stamp against these entries to see what they're missing.
+versions follow [SemVer](https://semver.org/) per the stability contract in
+[CONTRIBUTING.md](CONTRIBUTING.md). Installed projects can compare their
+`.claude/scaffold-version` stamp against these entries to see what they're missing — and run
+`/upgrade` to apply the delta safely.
+
+## [0.11.0] — 2026-07-18
+
+The lifecycle pass — the 1.0 runway. The scaffold can now keep its installed copies current,
+its own checker catches the bug classes that actually shipped, and SemVer means something
+specific. What remains before 1.0 is not a feature: it's a real project run through the
+scaffold end to end.
+
+### Added
+- **`/upgrade`** — upgrades an installed project's scaffold: reads the `.claude/scaffold-version`
+  stamp, summarizes the CHANGELOG delta first, then applies a three-way plan (ADD new files,
+  REPLACE only files the project never modified — verified against the stamp sha — ASK on
+  everything locally edited). Memory state, the skillOverrides profile, and filled placeholders
+  are never clobbered; finishes with the scaffold check + `/skill-update --check`.
+- **check-scaffold 2b** — every frontmatter block must `yaml.safe_load` (the class that shipped
+  twice), descriptions must fit the 1,536-char truncation cap, and one-time commands/templates
+  must carry `disable-model-invocation: true`. Negative-tested against a planted invalid file.
+- **Stability contract** (CONTRIBUTING.md) — what breaking/additive/patch mean for a scaffold's
+  interfaces; post-1.0, breaking changes ship migration notes and `/upgrade` does the mechanics.
 
 ## [0.10.0] — 2026-07-18
 

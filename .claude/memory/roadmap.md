@@ -6,7 +6,8 @@ Doubles as the scope **parking lot** (PROCESS.md §3.3): promotion into the v1 c
 written gate + a decision-log line.
 
 ## Now / in progress
-- (nothing active — the next real project run through `/setup` drives the backlog)
+- **Dogfooding** (user-driven): first real project through `/setup` → gates → `/report`; its
+  retro produces PROCESS.md 0.3.0 + the real README walkthrough → **the 1.0 gate**
 
 ## Next
 - Run `/doctor` to confirm the skill-listing budget post-rewrite
@@ -21,6 +22,7 @@ written gate + a decision-log line.
 - Stop-hook gate-debt warning (stricter §3.8 enforcement)
 
 ## Done (recent)
+- Release v0.11.0: lifecycle pass (/upgrade, check-scaffold 2b, stability contract) — 2026-07-18
 - Release v0.10.0: audit pass (58-agent adversarially-verified sweep, 45 findings fixed) + resource matrix — 2026-07-18
 - Release v0.9.0: self-hosted pass (local-stack: MinIO, CVAT, Postgres+extensions) — 2026-07-18
 - Release v0.8.0: infrastructure pass (infra-aws + IAM boundary template, containers, hook tiers) — 2026-07-18

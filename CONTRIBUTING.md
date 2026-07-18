@@ -38,6 +38,22 @@ Architecture decisions that keep coming up are recorded with their reasoning in
 `.claude/memory/reference/` (start with `architecture-skills-vs-agents.md`) — read those before
 proposing a restructure, and expect "revisit conditions" to be part of any counter-proposal.
 
+## The stability contract (what SemVer means for a scaffold)
+
+Installed projects depend on this repo's *interfaces*, so version bumps follow what a change does
+to them:
+
+- **Breaking (major):** renaming or removing a skill, command, agent, or hook; moving a
+  `.claude/memory/` path; changing the `**Pinned:**` line, resource-matrix, or phase-state
+  formats; changing a hook's exit-code semantics or the `settings.json` contract
+  (`skillOverrides` keys, hook wiring shape).
+- **Additive (minor):** new skills, lanes, commands, or gate items; extended docs; new template
+  files.
+- **Fixes (patch):** corrections that change no interface.
+
+Post-1.0, every breaking change ships a migration note in its CHANGELOG entry, and `/upgrade`
+handles the mechanical part for installed projects.
+
 ## Reporting problems
 
 Issues with a reproduction (the command you ran, what surfaced, what you expected) get fixed

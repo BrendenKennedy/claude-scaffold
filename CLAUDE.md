@@ -58,6 +58,7 @@ architecture pre-loaded) · `data-engineer` (data layer + annotation-ops tooling
 | `/bootstrap` | one-time, after `/intake`: generate + prove the project skeleton, back-fill placeholders |
 | `/gate` | phase-gate review per `PROCESS.md` §3.8 — evidence per item, records pass/debt in `memory/process/phase-state.md`, refuses to advance unchecked |
 | `/skill-update` | sync a tool skill to the installed version — pin-vs-`uv.lock` drift check, changelog research, fact updates, pin bump; git history archives old versions |
+| `/upgrade` | upgrade an installed project's scaffold to a newer release — stamp-vs-upstream delta via the CHANGELOG, three-way file plan (add / replace-unmodified / ask-on-edited), state and profiles never clobbered |
 | `/report` | draft a deliverable (report / white paper / stakeholder summary / model card) assembled from the repo's records — claims cite run ids; evidence gaps flagged, never filled |
 | `/review` | review the current `git diff` for bugs + cleanups |
 | `/wrapup` | close out the session — record note (incl. phase + gate debt) → (commit) → land |

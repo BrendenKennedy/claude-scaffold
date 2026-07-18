@@ -9,6 +9,9 @@
 # Checks:
 #   1. DRIFT      — every real skill / command / agent on disk is named in CLAUDE.md AND README.md
 #   2. FRONTMATTER — every SKILL.md / agent has name: + description:; SKILL.md name matches its dir
+#   2b. VALIDITY  — every frontmatter block parses as real YAML (the bug class that bit twice),
+#                   descriptions fit the 1,536-char listing truncation cap, and one-time
+#                   commands/templates carry disable-model-invocation: true
 #   3. CONFIG     — settings.json parses; every hook it wires exists, is executable, and compiles;
 #                   every skillOverride set "on" has a skill directory backing it
 #   4. INSTALL    — install.sh into a temp dir lands every file, re-run adds nothing (idempotent),
@@ -60,6 +63,49 @@ for f in .claude/agents/*.md; do
   grep -q '^description:' "$f" || fail "$f has no description: (agents dispatch by description)"
 done
 ok "frontmatter: every skill/agent has name + description; skill names match their dirs"
+
+# ---- 2b. VALIDITY: YAML + budgets + delisting -------------------------------
+# Invalid frontmatter shipped twice in this repo's history (see CHANGELOG 0.10.0) while check 2's
+# grep-level look passed. This parses every block for real and enforces the description budget.
+python3 - <<'PY' || fails=$((fails + 1))
+import re, sys
+from pathlib import Path
+try:
+    import yaml
+except ImportError:
+    yaml = None
+bad = 0
+CAP = 1536
+MUST_DISABLE = {
+    ".claude/commands/setup.md", ".claude/commands/intake.md", ".claude/commands/bootstrap.md",
+    ".claude/commands/_TEMPLATE.md", ".claude/skills/_example/SKILL.md",
+}
+files = (list(Path(".claude/skills").glob("*/SKILL.md"))
+         + list(Path(".claude/agents").glob("*.md"))
+         + list(Path(".claude/commands").glob("*.md")))
+for p in sorted(files):
+    text = p.read_text()
+    m = re.match(r"(?s)\A---\n(.*?)\n---\n", text)
+    if not m:
+        print(f"FAIL  {p}: no frontmatter block"); bad += 1; continue
+    fm = m.group(1)
+    data = {}
+    if yaml is not None:
+        try:
+            data = yaml.safe_load(fm) or {}
+        except Exception as e:
+            print(f"FAIL  {p}: frontmatter is not valid YAML — {str(e).splitlines()[0]}"); bad += 1
+            continue
+    desc = data.get("description") or ""
+    if isinstance(desc, str) and len(desc) > CAP:
+        print(f"FAIL  {p}: description {len(desc)} chars exceeds the {CAP} truncation cap"); bad += 1
+    if str(p) in MUST_DISABLE and "disable-model-invocation: true" not in fm:
+        print(f"FAIL  {p}: one-time command/template must carry disable-model-invocation: true"); bad += 1
+if yaml is None:
+    print("note  pyyaml unavailable — YAML validity checked structurally only")
+sys.exit(1 if bad else 0)
+PY
+ok "validity: frontmatter YAML parses; descriptions within the 1,536 cap; one-time commands delisted"
 
 # ---- 3. CONFIG --------------------------------------------------------------
 python3 - <<'PY' || fails=$((fails + 1))

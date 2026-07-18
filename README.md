@@ -74,7 +74,7 @@ flowchart LR
 | **Skills** | On-demand playbooks, loaded only when relevant. Three groups: always-on (chassis + core DS workflow), tool-gated (MLflow ↔ W&B, Hydra ↔ OmegaConf — each version-**pinned**, `/skill-update` syncs them to your installed dep), and lane-gated (tabular, time-series, LLM, SQL, serving — flipped by what you're building). |
 | **Subagents** | Specialists to delegate to — data engineering, model building, error analysis, diff review with an ML lens — each preloaded with the skills its job depends on. |
 | **Hooks** | Enforcement around tool calls: deps must go through `uv`, notebooks commit clean, secrets can't be written, leakage tests gate session end. |
-| **Commands** | `/setup` → `/intake` + `/bootstrap` (one-time), `/gate` (phase reviews), `/report` (evidence-cited deliverables), `/skill-update` (tool-skill maintenance), `/review` + `/wrapup` (the daily loop). |
+| **Commands** | `/setup` → `/intake` + `/bootstrap` (one-time), `/gate` (phase reviews), `/report` (evidence-cited deliverables), `/skill-update` + `/upgrade` (maintenance: tool facts and the scaffold itself stay current), `/review` + `/wrapup` (the daily loop). |
 | **Memory** | Session summaries, roadmap, reference notes, policy canon, and live process state (phase, risks, scope, decisions) — pulled on demand, never auto-loaded. |
 
 ## What's in the box
@@ -97,8 +97,8 @@ flowchart LR
 │   │                         #   · local-stack (offline twins: MinIO · CVAT · Postgres+extensions)
 │   │                         #   — flipped by project archetype, so a CV user never pays for them
 │   └── _example/             # how to write a skill
-├── commands/                 # setup · intake · bootstrap · gate · skill-update · report · review
-│                             #   · wrapup · _TEMPLATE
+├── commands/                 # setup · intake · bootstrap · gate · skill-update · upgrade · report
+│                             #   · review · wrapup · _TEMPLATE
 ├── hooks/
 │   ├── validate-python.py    # ruff format + check on every edited .py
 │   ├── validate-bash.sh      # blocks rm -rf of root/home
