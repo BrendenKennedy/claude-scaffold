@@ -31,8 +31,8 @@ The rules that apply to essentially every change (fuller policy via the `governa
 Auto-surface by description (that text is the entire routing surface — see
 `memory/reference/authoring-extensions.md` before adding one). Two tiers:
 - **Always-on chassis:** `process` · `governance` · `testing` · `memory` · `wave-planning`
-- **Always-on workflow (CV/DS):** `datasets` · `annotation` · `training` · `evaluation` ·
-  `pipelines` · `notebooks`
+- **Always-on workflow (CV/DS):** `datasets` · `eda` · `annotation` · `training` · `evaluation` ·
+  `statistics` · `visualization` · `pipelines` · `notebooks` · `reporting`
 - **Gated** (`/intake` flips via `skillOverrides` — **tool** skills by stack choice, **lane**
   skills by archetype; all off unless flipped): tools — `env-uv` (on) · `tracking-mlflow` (on) ·
   `config-hydra` (on) · `data-dvc` (on) · `tracking-wandb` · `config-omegaconf` · `hpo-optuna`;
@@ -53,6 +53,7 @@ architecture pre-loaded) · `data-engineer` (data layer + annotation-ops tooling
 | `/bootstrap` | one-time, after `/intake`: generate + prove the project skeleton, back-fill placeholders |
 | `/gate` | phase-gate review per `PROCESS.md` §3.8 — evidence per item, records pass/debt in `memory/process/phase-state.md`, refuses to advance unchecked |
 | `/skill-update` | sync a tool skill to the installed version — pin-vs-`uv.lock` drift check, changelog research, fact updates, pin bump; git history archives old versions |
+| `/report` | draft a deliverable (report / white paper / stakeholder summary / model card) assembled from the repo's records — claims cite run ids; evidence gaps flagged, never filled |
 | `/review` | review the current `git diff` for bugs + cleanups |
 | `/wrapup` | close out the session — record note (incl. phase + gate debt) → (commit) → land |
 

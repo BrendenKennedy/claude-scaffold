@@ -81,14 +81,16 @@ flowchart LR
 │                             #   · eval-analyst · data-engineer · _TEMPLATE
 ├── skills/
 │   ├── (chassis)             # process · governance · memory · testing · wave-planning
-│   ├── (CV/DS domain)        # datasets · annotation · training · evaluation · pipelines · notebooks
+│   ├── (CV/DS domain)        # datasets · eda · annotation · training · evaluation · statistics
+│   │                         #   · visualization · pipelines · notebooks · reporting
 │   ├── (tool, /intake-gated) # env-uv · tracking-mlflow · tracking-wandb · config-hydra
 │   │                         #   · config-omegaconf · data-dvc · hpo-optuna — version-pinned;
 │   │                         #     /skill-update syncs them to the installed dep
 │   ├── (lane, /intake-gated) # tabular · timeseries · finetune-unsloth · llm-eval · monitoring
 │   │                         #   — flipped by project archetype, so a CV user never pays for them
 │   └── _example/             # how to write a skill
-├── commands/                 # setup · intake · bootstrap · gate · skill-update · review · wrapup · _TEMPLATE
+├── commands/                 # setup · intake · bootstrap · gate · skill-update · report · review
+│                             #   · wrapup · _TEMPLATE
 ├── hooks/
 │   ├── validate-python.py    # ruff format + check on every edited .py
 │   ├── validate-bash.sh      # blocks rm -rf of root/home
