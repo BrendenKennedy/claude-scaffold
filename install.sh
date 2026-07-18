@@ -30,7 +30,7 @@ skipped=0
 
 # Source set: every file under .claude/, plus the root CLAUDE.md and PROCESS.md
 # (the phase-gate framework the process skill + /gate run against — it lives at
-# the project root per its own Part 0 so retros version it with the project).
+# the project root per its own 'How to use it' preamble so retros version it with the project).
 while IFS= read -r src; do
   rel="${src#"$SCRIPT_DIR"/}"
   dest="$TARGET/$rel"

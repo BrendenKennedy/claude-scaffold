@@ -60,7 +60,7 @@ flowchart LR
     A["install.sh<br/><i>copy .claude/ in</i>"] --> B["/intake<br/><i>define the PROJECT<br/>pick the STACK</i>"]
     B --> C["/bootstrap<br/><i>build the SHAPE</i>"]
     C --> H["/gate<br/><i>pass P1</i>"]
-    H --> D["daily loop"]
+    H --> D
     subgraph D["the daily loop"]
         direction LR
         E["work — skills<br/>auto-surface"] --> F["/review<br/>the diff"] --> G["/wrapup<br/>record + land"]

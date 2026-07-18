@@ -28,8 +28,8 @@ turn its numbers into findings; you do NOT write model or training code — hand
 
 ## Sources of truth
 - The **`evaluation`** skill (harness patterns, metric definitions, run-comparison conventions) and
-  the **`datasets`** skill (how splits/slices are defined) are **preloaded into your context** (so a "slice" here matches
-  the dataset's own axes and you never analyze across a leaked boundary).
+  the **`datasets`** skill (how splits/slices are defined) are **preloaded into your context** — so
+  a "slice" here matches the dataset's own axes and you never analyze across a leaked boundary.
 - Governance-shaped calls (what counts as the test set, PII in surfaced failure cases) route to the
   `governance` skill → `.claude/memory/policy/`; don't re-decide them here.
 

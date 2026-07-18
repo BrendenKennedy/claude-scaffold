@@ -2,6 +2,12 @@
 CLAUDE.local.md
 .claude/settings.local.json
 
+# Secrets — .env must never be committed (the whole security model assumes this;
+# .env.example ships empty values and stays tracked)
+.env
+.env.*
+!.env.example
+
 # Python bytecode cruft (e.g. from compiling the hook)
 __pycache__/
 *.py[oc]

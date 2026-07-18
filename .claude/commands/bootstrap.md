@@ -95,7 +95,7 @@ vars beat the file), and call it at the **top of each entry point** — never mi
 "no data" case *inside* the config system, so the same `train.py` runs on day one and on real data later —
 flip one flag. It's also what makes step 5 runnable at all.
 
-### The bootstrap rule about data: STRUCTURE, NOT A DATASET
+### 3a. The bootstrap rule about data: STRUCTURE, NOT A DATASET
 
 **This command emits structure and contracts. It must not bake a specific dataset into the code.** The
 skeleton outlives any one dataset — the same repo gets pointed at a new client, a new line, a new product

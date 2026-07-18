@@ -43,6 +43,6 @@ Authoring notes (delete in real skills):
 - Skills can include supporting files alongside SKILL.md (scripts, reference docs); link to them
   with relative paths and Claude can read them on demand.
 - Put deep knowledge WITH discovery triggers here. Reusable "how we do X" with no triggers →
-  .claude/docs/reference/. What happened in a session → .claude/docs/sessions/.
+  .claude/memory/reference/. What happened in a session → .claude/memory/sessions/.
 - Keep it refined and current. A stale skill is worse than no skill.
 -->

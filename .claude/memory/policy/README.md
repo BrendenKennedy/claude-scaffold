@@ -5,8 +5,10 @@ has to obey. This directory is the DATA (the canon); the **`governance` skill** 
 over it (locate → load → apply → record). Policy text lives here in exactly one place and is never
 copied into a skill or CLAUDE.md — those only *point* at it.
 
-> Scaffolded empty on purpose. Add one canon file per **governed domain** your project has, then
-> register it in the `governance` skill's Policy index. Do NOT invent domains you don't need yet.
+> Ships with three authored domains — `data-governance.md`, `model-governance.md`, `security.md` —
+> registered in the `governance` skill's Policy index (the `process` domain's canon is repo-root
+> `PROCESS.md`). Add one canon file per additional **governed domain** your project has, then
+> register it there. Do NOT invent domains you don't need yet.
 
 ## The pattern
 - **Canon** = a version-controlled `<domain>.md` here. A human authors it; code is written and data is
@@ -15,13 +17,14 @@ copied into a skill or CLAUDE.md — those only *point* at it.
   recording each irreducible judgment call: *what / which rule / why*. Add one only for domains that
   make case-by-case calls over time (a prescriptive style guide needs none).
 
-## Typical domains (fill in the ones you have)
+## Domains (shipped, plus typical additions)
 | Domain | Canon file | Governs | Needs a decision log? |
 |---|---|---|---|
+| `data-governance` *(shipped)* | `data-governance.md` | datasets, labels, licensing, PII, splits & leakage | yes |
+| `model-governance` *(shipped)* | `model-governance.md` | reproducibility, checkpoint provenance, model cards, release | yes |
+| `security` *(shipped)* | `security.md` | secrets, sensitive data, egress / threat model | yes |
 | `<code conventions>` | `<code-conventions.md>` | the idioms every source module follows | usually no (prescriptive) |
 | `<data / schema>` | `<data-model.md>` | the data model — entities, fields, invariants | yes, if shape calls recur |
-| `<security>` | `<security.md>` | secrets, sensitive data, egress / threat model | as needed |
-| `<...>` | `<...>` | `<what it governs>` | `<yes/no>` |
 
 ## Adding a domain
 1. Author the canon at `policy/<name>.md`.

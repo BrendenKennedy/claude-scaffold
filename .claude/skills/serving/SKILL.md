@@ -30,12 +30,13 @@ when a stated latency requirement exists — it's an operational liability you n
 
 ## The endpoint shape (when online is justified)
 ```python
-app = FastAPI()
-
-@app.on_event("startup")
-def load():                                        # ONCE, at startup — never per-request
+@asynccontextmanager
+async def lifespan(app: FastAPI):                  # load ONCE at startup — never per-request
     app.state.model = mlflow.pyfunc.load_model(f"models:/{NAME}@champion")
     app.state.version = resolve_version(NAME)      # pin what actually loaded
+    yield
+
+app = FastAPI(lifespan=lifespan)
 
 class Item(BaseModel):                             # the boundary contract
     ...                                            # fields + ranges the TRAINING data assumed

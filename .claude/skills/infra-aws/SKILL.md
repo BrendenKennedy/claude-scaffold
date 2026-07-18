@@ -30,7 +30,7 @@ the deps are installed (`uv add boto3`; the CLI installs system-side)
 ## The role model — set up once, by the human
 Claude acts through a dedicated **`claude-for-datascience`** IAM identity whose policy is the
 blast radius. Starter policy: `.claude/templates/aws-iam-policy.json` — copy it, replace
-`PROJECT-PREFIX` (S3 bucket prefix), `ACCOUNT-ID`, `REGION`, and `CLUSTER-NAME`, review it
+`PROJECT-PREFIX` (S3 bucket prefix), `ACCOUNT-ID`, `REGION`, `CLUSTER-NAME`, `DB-NAME`, and `DB-USER`, review it
 yourself, then attach it. Its shape, which the human should verify survives their edits:
 - **Project-prefixed ARNs only** — `arn:aws:s3:::PROJECT-PREFIX-*`; the role cannot see other
   buckets' contents.

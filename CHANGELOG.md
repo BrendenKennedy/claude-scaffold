@@ -4,7 +4,35 @@ All notable changes to claude-for-datascience. Format follows [Keep a Changelog]
 versions follow [SemVer](https://semver.org/). Installed projects can compare their
 `.claude/scaffold-version` stamp against these entries to see what they're missing.
 
-## [Unreleased]
+## [0.10.0] — 2026-07-18
+
+The audit pass: an 11-dimension, adversarially-verified sweep of the whole scaffold (58 agents;
+45 confirmed findings, 0 refuted) with every finding fixed. Also ships the resource matrix.
+
+### Fixed
+- **Two invalid YAML frontmatters** (`/intake`'s colon-bearing description, `/report`'s double
+  bracket `argument-hint`) — a regression of the exact bug class fixed in v0.2.x; all 50
+  frontmatter blocks now `yaml.safe_load` clean.
+- **`validate-bash` B1 hardened:** slash-suffixed home wipes (`~/`, `$HOME/`, `/home/<user>`
+  targets of a recursive force-delete) now hard-BLOCK — they previously fell through to the ASK
+  tier; verified by battery.
+- **`run-leakage-tests.sh`:** pytest exit 5 (no tests matched `-k leakage`) no longer blocks
+  session end as a spurious failure.
+- **Shipped `.gitignore` now ignores `.env`** — the whole secrets model assumed this and the
+  template path shipped without it.
+- **Stale/broken references:** `_example`'s nonexistent `.claude/docs/` paths, intake's
+  removed-placeholder MLflow bullet (repointed at the real experiment/run-name placeholders,
+  plus a claim for the agents' `<PROJECT NAME>` token), policy/README's "scaffolded empty"
+  claim (three domains ship), memory/README's missing `process/` row, templates/README's
+  missing `aws-iam-policy.json` row + gitleaks mention, the training skill's wrong
+  `config_path`/`config_name`, its resume snippet restoring only 2 of 4 saved RNG streams,
+  serving's deprecated `on_event` (now lifespan), infra-aws's incomplete placeholder list,
+  authoring-extensions' missing lane-gated tier, the memory skill's self-contradictory
+  close-out order, `/setup` leaving the session note uncommitted, PROCESS.md's uncited
+  templates + tracker hardcoding + worked-example leak, and a dozen smaller polish items
+  (dangling colon, stale counts, mermaid double-label, agent boundary statements).
+- **Release tags v0.4.0–v0.9.0 re-created as annotated** so `git describe` reports the true
+  version (they were lightweight; v0.1–v0.3 were annotated).
 
 ### Added
 - **Resource matrix** (`.claude/memory/process/resources.md`, shipped as a seed) — the single
@@ -199,7 +227,8 @@ is renamed, the README restructured, and the YAML frontmatter GitHub chokes on i
   force-push / `branch -D` / history rewrites, `dvc gc`/`destroy`/`remove`, and deletion of ML
   assets (`data/`, `models/`, `*.pt`, `mlflow.db`, `uv.lock`, `.dvc`) now force a confirmation
   dialog **in every permission mode, including `bypassPermissions`**. BLOCK tier gains
-  curl/wget-pipe-to-interpreter. 41-case block/ask/allow battery.
+  curl/wget-pipe-to-interpreter. Verified against a 41-case block/ask/allow battery during
+  development (a verification exercise, not a shipped test suite).
 - **README "Security model" section** — states the threat model plainly: hooks are guardrails
   against agent mistakes, the permission system is the boundary.
 

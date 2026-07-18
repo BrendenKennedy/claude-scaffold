@@ -30,7 +30,7 @@ ask() {
 # ── BLOCK tier ───────────────────────────────────────────────────────────────
 
 # B1) Recursive force-deletes aimed at a root / home path.
-if printf '%s' "$cmd" | grep -Eq 'rm[[:space:]]+-[a-zA-Z]*(rf|fr)[a-zA-Z]*[[:space:]]+(/|~|/\*|\$HOME)([[:space:]]|;|$)'; then
+if printf '%s' "$cmd" | grep -Eq 'rm[[:space:]]+-[a-zA-Z]*(rf|fr)[a-zA-Z]*[[:space:]]+(/|~/?|/\*|\$HOME/?|/home/[^[:space:];]+)([[:space:]]|;|$)'; then
   echo "BLOCKED: refusing a recursive force-delete of a root/home path. Narrow the target path." >&2
   exit 2
 fi

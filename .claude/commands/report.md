@@ -3,7 +3,7 @@ description: >
   Draft a deliverable — technical report, white paper, stakeholder summary, or model card —
   assembled from the repo's own records (project definition, decision log, tracker runs, session
   notes), with every claim traced to evidence and gaps flagged instead of filled in.
-argument-hint: [report | whitepaper | stakeholder | model-card] [slug]
+argument-hint: "[report | whitepaper | stakeholder | model-card] [slug]"
 ---
 
 Draft the deliverable `$1` (default: `report`). **Load the `reporting` skill and follow it** —

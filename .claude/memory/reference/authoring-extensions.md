@@ -51,12 +51,17 @@ On-demand expertise. Loaded only when the `description` matches, so it can be lo
 **Description formula** (from `_example` — front-loaded, ≤1,000 chars, see the budget rule above):
 > `<Domain/contract in one clause> — <what it carries: the 3–5 specifics an agent can't guess>. Load when <the tasks it covers>. Triggers: <phrases the user will actually type, sharpest first>. <Optional one-clause scope boundary — what belongs to a sibling skill>.`
 
-**Two tiers — decide which before writing:**
-- **Always-on** (chassis + workflow) — process skills and tool-agnostic CV/DS domain skills. Not listed
-  in `skillOverrides`; always active. Add a row to the right CLAUDE.md table.
-- **Tool-gated** — one tool per skill (a tracker, a config lib, …). Add an `skillOverrides` entry in
+**Three tiers — decide which before writing:**
+- **Always-on** (chassis + workflow) — process skills and archetype-agnostic DS domain skills. Not
+  listed in `skillOverrides`; always active. Add a row to the right CLAUDE.md list.
+- **Tool-gated** — one tool per skill (a tracker, a config lib, …). Add a `skillOverrides` entry in
   `settings.json` (`"<name>": "on"|"off"`) and let `/intake` flip it. This is how MLflow⇄W&B or
-  Hydra⇄OmegaConf swap without touching the always-on skills that reference them.
+  Hydra⇄OmegaConf swap without touching the always-on skills that reference them. Carries a
+  `**Pinned:**` version line (see the tool-skill rule below).
+- **Lane-gated** — a whole workflow lane flipped by project *archetype* (tabular, timeseries, LLM,
+  sql, serving, …): same `skillOverrides` mechanism, but `/intake` flips it from the step-0
+  definition doc rather than a stack question. Off = zero context cost — a CV user never pays for
+  the tabular lane; gated descriptions may run longer than always-on ones.
 
 **Body shape:** `When this applies` (mirrors the triggers) → `The facts` (commands, versions, contracts,
 exact configs — the specifics an agent can't guess) → `How to do X` → `Gotchas`. Tables and code blocks

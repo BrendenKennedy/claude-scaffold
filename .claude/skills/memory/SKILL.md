@@ -77,7 +77,7 @@ Naming: ISO date + kebab slug (`2026-01-15-project-bootstrap.md`).
   known before you commit); add the **commit hash** in a small follow-up commit or read it from git later.
 
 ## Close-out (the wrap-up sequence)
-**Land the branch → record the session note → update the roadmap.** One coherent unit of work = one
+**Record the session note → update the roadmap → (commit) → land the branch.** One coherent unit of work = one
 session note. Keep the roadmap status and the session prose from drifting. The **`/wrapup`** command
 drives this close-out end-to-end (record → optional commit → land) as a checklist — prefer it over
 reconstructing the steps from memory.

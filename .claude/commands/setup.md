@@ -57,8 +57,9 @@ locally, or push + PR).
 
 Then invoke the `wrapup` command verbatim to close the session out: the session note records what
 setup built, the checkpoint commits + branch, and the current phase + gate debt (its instructions
-already cover this); the roadmap gets the open items. Skip wrapup's own commit/land step — this
-command's checkpoints already did it; just record the hashes in the note per the memory skill.
+already cover this); the roadmap gets the open items. Let wrapup's commit step run as a final
+checkpoint (`chore: record setup session (/wrapup)`) so the session note + roadmap land in history
+too — the earlier checkpoints covered the build, not the record; landing already happened above.
 
 Finally, report — deferring to each piece's own report for its detail:
 

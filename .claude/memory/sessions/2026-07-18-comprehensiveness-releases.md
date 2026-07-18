@@ -34,7 +34,7 @@ DS agents cover. Closed with public polish: CONTRIBUTING.md + a README walkthrou
 - **Skill version archive = git history** — no parallel old copies; /skill-update commits
   record old→new pins
 - **Ad-hoc exemption** — process ceremony scoped to project threads only
-- Final scale: 31 skills (5 chassis, 10 always-on workflow, 16 gated), 6 agents, 9 commands
+- Final scale at v0.7.0: 31 skills (5 chassis, 10 always-on workflow, 16 gated), 5 agents, 8 commands
 
 ## State
 - `main` at v0.7.0 + polish commit, all scaffold checks green, origin not yet pushed

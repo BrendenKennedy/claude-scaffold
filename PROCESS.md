@@ -206,7 +206,7 @@ project/
 - **Experiment budget:** before the first non-baseline model, harden P1's rough compute estimate into a written plan — the experiments you intend to run, est. GPU-hours each, against the total you have before the deadline. Every experiment gets a written question and a time/compute budget *before* it starts (§3.6); track spend as you go
 - Temporal train/test split when data has time structure — random splits leak the future
 - Log every run in the experiment log (Template T6): date, data snapshot, features, params, metrics
-- Calibrate if probabilities are consumed downstream (log loss / Brier score, `CalibratedClassifierCV`) — an accurate-but-overconfident model is worse than useless when compared against odds
+- Calibrate if probabilities are consumed downstream (log loss / Brier score, `CalibratedClassifierCV`) — an accurate-but-overconfident model is worse than useless when its probabilities feed a downstream decision (e.g. compared against market odds)
 - Error analysis: segment the failures. *Where* it fails matters more than how often
 - Robustness spot-checks: does performance survive across time slices / subgroups?
 
@@ -268,22 +268,22 @@ project/
 These artifacts run through every phase. They are not paperwork *about* the management — they **are** the management. A lead's job is largely keeping these current and enforcing the gates other people want to skip.
 
 ### 3.1 Decision Log
-One line per decision: date, decision, alternatives considered, rationale. Leads get asked "why did we do X?" constantly; this is the answer. It also stops re-litigating settled questions. Log anything you'd have to reconstruct from memory later (storage choice, scope cuts, source selection, metric choice).
+One line per decision (Template T3): date, decision, alternatives considered, rationale. Leads get asked "why did we do X?" constantly; this is the answer. It also stops re-litigating settled questions. Log anything you'd have to reconstruct from memory later (storage choice, scope cuts, source selection, metric choice).
 
 **In this repo:** process-level decisions (scope, metric, kill/pivot, gate judgment calls) land in `.claude/memory/process/decision-log.md`, via the `governance` skill's record protocol. Domain-specific calls (data licensing, model release, security) go in that domain's log under `.claude/memory/policy/` — one home per decision, no parallel logs.
 
 ### 3.2 Risk Register
-Top 3–7 live risks, each with likelihood, impact, and a mitigation. Reviewed at every phase gate. New risks discovered mid-phase get logged immediately, not remembered later. (This is CRISP-ML(Q)'s core QA move — identify risk, mitigate risk — generalized to the whole project.)
+Top 3–7 live risks (Template T4), each with likelihood, impact, and a mitigation. Reviewed at every phase gate. New risks discovered mid-phase get logged immediately, not remembered later. (This is CRISP-ML(Q)'s core QA move — identify risk, mitigate risk — generalized to the whole project.)
 
 ### 3.3 Scope Ledger
-Two lists: **v1 (the contract)** and **the parking lot**. Anything not in v1 goes to the parking lot by default. Promotion from parking lot to scope requires a written gate: what does it add, what does it cost, what does it displace? This is how scope creep dies.
+Two lists (the Scope Ledger template, Part IV): **v1 (the contract)** and **the parking lot**. Anything not in v1 goes to the parking lot by default. Promotion from parking lot to scope requires a written gate: what does it add, what does it cost, what does it displace? This is how scope creep dies.
 
 **In this repo:** the v1 contract lives in `.claude/memory/process/scope-ledger.md`; the parking lot **is** `.claude/memory/roadmap.md` — one backlog, not two. Promotions get a line in the decision log.
 
 ### 3.4 Experiment Log
 Every model run: date, data snapshot ID, feature set, params, metrics, one-line takeaway. A spreadsheet is fine; MLflow is fine; a markdown table is fine. What is not fine is "I think the third run was the good one."
 
-**In this repo:** the experiment log **is** the tracker (MLflow, via the `tracking-mlflow` skill — params, metrics, config snapshot, takeaway as a run note). T6 is the fallback for pre-tracking spikes only; two experiment logs is how one goes stale.
+**In this repo:** the experiment log **is** the tracker (`/intake`'s choice — MLflow by default — via its tracking skill: params, metrics, config snapshot, takeaway as a run note). T6 is the fallback for pre-tracking spikes only; two experiment logs is how one goes stale.
 
 ### 3.5 Feature Dictionary
 Every feature: name, formula/source, hypothesis, leakage review result, added date. Doubles as documentation for the video/report and as the leakage audit trail.

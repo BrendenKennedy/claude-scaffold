@@ -29,7 +29,7 @@ One entry point, all knobs from the composed config so a run is fully described 
 (the **config-over-constants** always-on convention).
 
 ```python
-@hydra.main(version_base=None, config_path="configs", config_name="train")
+@hydra.main(version_base=None, config_path="conf", config_name="config")
 def main(cfg: DictConfig) -> None:
     seed_everything(cfg.seed)                 # <PLACEHOLDER: seed> — record it (see below)
     device = torch.device(cfg.device if torch.cuda.is_available() else "cpu")
@@ -83,7 +83,8 @@ are versioned there.
 ckpt = torch.load(path, map_location=device, weights_only=False)
 model.load_state_dict(ckpt["model"]); optimizer.load_state_dict(ckpt["optimizer"])
 scheduler.load_state_dict(ckpt["scheduler"]); scaler.load_state_dict(ckpt["scaler"])
-torch.set_rng_state(ckpt["rng"]["torch"]); np.random.set_state(ckpt["rng"]["numpy"])
+torch.set_rng_state(ckpt["rng"]["torch"]); torch.cuda.set_rng_state_all(ckpt["rng"]["cuda"])
+np.random.set_state(ckpt["rng"]["numpy"]); random.setstate(ckpt["rng"]["python"])
 start_epoch = ckpt["epoch"] + 1
 ```
 A true resume continues the same trajectory — restore optimizer/scheduler/scaler/RNG, not just `model`.

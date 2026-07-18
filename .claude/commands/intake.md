@@ -1,5 +1,8 @@
 ---
-description: One-time onboarding — the "what are we building?" definition interview (archetype, T1, anti-pattern challenge), then the stack interview: write skillOverrides and fill the answerable <PLACEHOLDER>s.
+description: >
+  One-time onboarding — the "what are we building?" definition interview (archetype, T1,
+  anti-pattern challenge), then the stack interview — write skillOverrides and fill the
+  answerable <PLACEHOLDER>s.
 disable-model-invocation: true
 ---
 
@@ -75,7 +78,7 @@ present those as the pre-selected option and confirm, don't re-ask blind:
 - **HPO** — Hydra multirun grids only *(default)* / Optuna (continuous spaces, pruning, resumable
   search). Flips `hpo-optuna`.
 
-Capture the five answers before touching any file.
+Capture the answers before touching any file.
 
 ## 2. Write `settings.json` `skillOverrides`
 
@@ -105,15 +108,20 @@ Edit `.claude/settings.json` — set each key to `"on"` or `"off"` from the answ
 
 Exactly one tracker key and one config key should be `on`; the unchosen siblings go `off`. If the tracker
 or data-versioning answer is "none", leave all keys in that group `off`. **Lane skills flip from the
-archetype in the definition doc (step 0) — no extra question needed:**
+archetype in the definition doc (step 0) — no extra question needed; the mapping is the lane rows in the table above.**
 
 ## 3. Fill the answerable `<PLACEHOLDER>`s
 
 Run `grep -rn "<PLACEHOLDER" .claude/ CLAUDE.md README.md` to list every one. Resolve **only** those the
 interview now answers; leave the rest for the user. The answer-determined ones:
 
-- **MLflow tracking URI** — `.claude/skills/tracking-mlflow/SKILL.md` (`set_tracking_uri(...)`). Fill if
-  the user gave a URI; otherwise leave and flag it. Skip entirely if the tracker isn't MLflow.
+- **MLflow experiment + run naming** — `.claude/skills/tracking-mlflow/SKILL.md` (the
+  `set_experiment("<PLACEHOLDER: ...>")` and `run_name` placeholders). Fill from the definition doc's
+  project name. The tracking URI itself has no placeholder — it flows through `MLFLOW_TRACKING_URI`
+  in `.env` (note the value for `/bootstrap` if the user gave one). Skip if the tracker isn't MLflow.
+- **Project name in the agents** — `.claude/agents/*.md` carry a `<PROJECT NAME>` token (it sits
+  outside the `<PLACEHOLDER` grep — this bullet is its claim). Fill from the definition doc's project
+  name; always answerable, step 0 produced it.
 - **W&B project name** — `.claude/skills/tracking-wandb/SKILL.md` (`wandb.init(project=...)`). Fill if
   the user named a project; otherwise leave and flag it. Skip entirely if the tracker isn't W&B.
 - **DVC remote URL** — `.claude/skills/data-dvc/SKILL.md` (`dvc remote add -d storage ...`). Fill with the

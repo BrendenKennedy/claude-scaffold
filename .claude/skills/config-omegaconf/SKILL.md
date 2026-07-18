@@ -59,7 +59,7 @@ def load_config(argv_overrides=True) -> TrainConfig:
 
 ## Interpolation + environment
 `${other.key}` cross-references; `${oc.env:DATA_ROOT}` reads the **process** environment — it
-does not read `.env`, so entry points call `load_env()` first (same rule as `config-hydra`;
+does not read `.env`, so entry points call `load_env()` first (the load-order rule `/bootstrap` wires into every entry point;
 `/bootstrap` emits `src/<pkg>/env.py`). Fail-fast alternative with a default:
 `${oc.env:DATA_ROOT,./data}`.
 

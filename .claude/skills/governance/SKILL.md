@@ -31,7 +31,7 @@ Policy text lives in exactly one place — the canon file — never copied into 
 elsewhere.
 
 ## Policy index (the domains + where their canon lives)
-> Ships with the three domains below. Add a row per new governed domain (e.g. a `code-conventions.md`
+> Ships with the authored domains below. Add a row per new governed domain (e.g. a `code-conventions.md`
 > once your Python idioms stabilize); each row's canon file goes in `.claude/memory/policy/`.
 
 | Domain | Governs | Canon (`.claude/memory/policy/`) | Decision log | Apply when… |

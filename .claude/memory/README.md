@@ -12,6 +12,7 @@ session). Pulled in on demand, never auto-loaded.
 | `reference/` | stable "how we do X" notes that recur but don't warrant a full skill |
 | `roadmap.md` | the living backlog: next · in-progress · done-recent |
 | `policy/` | authored governance policy canon + decision logs (accessed via the `governance` skill) |
+| `process/` | live `PROCESS.md` state — `project-definition`, `phase-state` (gates), `risk-register`, `scope-ledger`, `decision-log`, `resources` (the resource matrix); written by `/gate`, `/intake`, and the infra lanes |
 
 ## Not to be confused with
 - **Repo-root `docs/`** — human/project documentation (READMEs, design contracts). That's project
@@ -25,6 +26,7 @@ session). Pulled in on demand, never auto-loaded.
 - **What happened / current state** → `sessions/`.
 - **What's next** → `roadmap.md`.
 - **Rules the code/schema must obey** → `policy/` (via the `governance` skill).
+- **Current phase / gates / scope / risks / resources** → `process/` (via the `process` skill + `/gate`).
 
 If a category outgrows itself (e.g. decision history), split it out — a dedicated log beside its
 canon in `policy/`, or a new subdir here, is the obvious next addition.

@@ -26,8 +26,9 @@ command -v uv >/dev/null 2>&1 || exit 0
 out="$(cd "$dir" && timeout 120 uv run pytest -q -k leakage -x --no-header 2>&1)"
 status=$?
 
-# 124 = timeout, 127 = uv/pytest missing inside the env — infrastructure, not a leak; stay silent.
-if [ "$status" -ne 0 ] && [ "$status" -ne 124 ] && [ "$status" -ne 127 ]; then
+# 124 = timeout, 127 = uv/pytest missing, 5 = pytest collected no matching tests (the word
+# "leakage" appeared in tests/ but no test matches -k) — infrastructure/absence, not a leak.
+if [ "$status" -ne 0 ] && [ "$status" -ne 124 ] && [ "$status" -ne 127 ] && [ "$status" -ne 5 ]; then
   {
     echo "[run-leakage-tests] Split-leakage tests FAILED — do not end the session on a leaked split:"
     echo "$out" | tail -15
