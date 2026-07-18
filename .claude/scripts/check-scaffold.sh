@@ -139,8 +139,13 @@ ok "config: settings.json parses; wired hooks exist, are executable, and compile
 # ---- 4. INSTALL -------------------------------------------------------------
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
-# The find filter here MUST mirror install.sh's — a mismatch shows up as a file-count failure below.
-src_count="$(find .claude -type f ! -name '*.py[co]' ! -path '*/__pycache__/*' | wc -l)"
+# The find filter here MUST mirror install.sh's. install.sh excludes this repo's memory INSTANCE
+# content (dated session notes + the live roadmap/scaffold-journal) and re-seeds blank roadmap +
+# scaffold-journal from templates/memory/. The roadmap/journal exclusion+reseed cancels 1:1 (still
+# one of each in the target), so only the dated session notes actually change the count — exclude
+# just those here to keep src and dst in agreement.
+src_count="$(find .claude -type f ! -name '*.py[co]' ! -path '*/__pycache__/*' \
+  ! -path '*/memory/sessions/[0-9]*' | wc -l)"
 src_count=$((src_count + 3))  # + CLAUDE.md + PROCESS.md + the version stamp
 src_ph="$(grep -rho --exclude-dir=__pycache__ '<PLACEHOLDER' .claude CLAUDE.md PROCESS.md | wc -l)"
 

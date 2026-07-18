@@ -45,10 +45,32 @@ while IFS= read -r src; do
   copied=$((copied + 1))
 done < <(
   # Exclude bytecode: a dirty working tree (e.g. a compiled hook) must not ship .pyc into targets.
-  find "$SCRIPT_DIR/.claude" -type f ! -name '*.py[co]' ! -path '*/__pycache__/*'
+  # Also exclude THIS repo's own memory INSTANCE content — dated session notes, and the live
+  # roadmap/scaffold-journal (full of this repo's dev history). A fresh project must start with
+  # empty stores, not the scaffold-maker's backlog. The blank roadmap/journal are seeded from
+  # templates/memory/ just below; the sessions/ dir still ships its README + _template.
+  find "$SCRIPT_DIR/.claude" -type f ! -name '*.py[co]' ! -path '*/__pycache__/*' \
+    ! -path '*/.claude/memory/sessions/[0-9]*' \
+    ! -path '*/.claude/memory/roadmap.md' \
+    ! -path '*/.claude/memory/scaffold-journal.md'
   echo "$SCRIPT_DIR/CLAUDE.md"
   echo "$SCRIPT_DIR/PROCESS.md"
 )
+
+# Seed the empty stores that were excluded above from their templates (never overwrite an existing
+# one — same idempotency rule as the copy loop). This is what a fresh project fills in as it runs.
+for seed in roadmap scaffold-journal; do
+  seed_dest="$TARGET/.claude/memory/$seed.md"
+  if [ -e "$seed_dest" ]; then
+    printf '  skip (exists): %s\n' ".claude/memory/$seed.md"
+    skipped=$((skipped + 1))
+  else
+    mkdir -p "$(dirname "$seed_dest")"
+    cp "$SCRIPT_DIR/.claude/templates/memory/$seed.md" "$seed_dest"
+    printf '  add:           %s\n' ".claude/memory/$seed.md"
+    copied=$((copied + 1))
+  fi
+done
 
 # Make hooks/scripts executable in the target (they're invoked directly).
 find "$TARGET/.claude/hooks" "$TARGET/.claude/scripts" -type f \

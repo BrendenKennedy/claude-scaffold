@@ -26,6 +26,9 @@ written gate + a decision-log line.
 - Data-validation tool skill (pandera/great-expectations)
 
 ## Done (recent)
+- Ship clean memory stores — `install.sh` no longer copies this repo's dev session notes / roadmap /
+  journal into fresh projects; seeds blank stores from `templates/memory/` — 2026-07-18,
+  [session note](sessions/2026-07-18-ship-clean-stores.md), branch `ship-clean-stores`.
 - Scaffold self-assessment loop — `scaffold-journal.md` + wrapup scaffold-check + `/scaffold-retro`;
   the tooling's meta-loop (parallel to PROCESS.md Part V) — 2026-07-18,
   [session note](sessions/2026-07-18-scaffold-self-assessment-loop.md), branch `scaffold-journal`, commit `d96618d`.

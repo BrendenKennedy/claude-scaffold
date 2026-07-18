@@ -54,6 +54,15 @@ versions follow [SemVer](https://semver.org/) per the stability contract in
   regenerates and diffs it, so the index structurally cannot drift (skips silently in installed
   projects, which don't receive `docs/`).
 
+### Fixed
+- **`install.sh` no longer ships this repo's own memory *content* into fresh projects.** It was
+  copying the scaffold-maker's dated session notes, dev roadmap (release history), and
+  scaffold-journal entries into every installed project — confusing clutter in a stranger's repo.
+  Now it ships **empty stores**: blank `roadmap.md` + `scaffold-journal.md` seeded from
+  `.claude/templates/memory/`, and `sessions/` with only its README + template. The structural
+  templates (`process/`, `reference/`, `policy/`) still ship as before. `check-scaffold`'s
+  file-count check updated to match.
+
 ## [0.7.0] — 2026-07-18
 
 The hardening & lifecycle release: an 11-dimension, adversarially-verified audit of the whole
