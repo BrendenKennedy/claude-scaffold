@@ -9,7 +9,6 @@ written gate + a decision-log line.
 - (nothing active — the next real project run through `/setup` drives the backlog)
 
 ## Next
-- Push `main` + tags to origin; create GitHub releases from the CHANGELOG entries
 - Run `/doctor` to confirm the skill-listing budget post-rewrite
 - Watch skill surfacing after the description rewrite; sharpen under-triggering descriptions
 
@@ -21,6 +20,7 @@ written gate + a decision-log line.
 - Stop-hook gate-debt warning (stricter §3.8 enforcement)
 
 ## Done (recent)
+- Pushed to origin; GitHub releases v0.4.0–v0.7.0 created from CHANGELOG — 2026-07-18
 - Release v0.7.0: end-to-end pass (sql, data-acquisition, serving, wrangling lanes; ad-hoc mode; fairness slices) — 2026-07-18
 - Release v0.6.0: communication layer (eda, visualization, statistics, reporting + /report) — 2026-07-18
 - Release v0.5.0: lane skills (tabular, timeseries, monitoring) + config-omegaconf — 2026-07-18
