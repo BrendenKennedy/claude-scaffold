@@ -7,10 +7,13 @@ description: >
   ARNs, read-heavy defaults, explicit denies on bucket/cluster deletion and all IAM mutation),
   credential hygiene (named profiles / SSO — keys never in the repo or transcript), S3 data
   plumbing (buckets as DVC remotes, `aws s3 sync`, versioning + lifecycle for raw immutability),
-  Redshift access (UNLOAD/COPY through S3, the Data API; query discipline stays in `sql`), and
-  cost awareness (know what a command spends before running it). Load when provisioning or
-  touching AWS. Triggers: AWS, S3, bucket, boto3, aws cli, IAM, role, Redshift, UNLOAD, COPY,
-  s3 sync, presigned URL, cloud storage, DVC remote s3, aws profile, SSO.
+  Redshift access (UNLOAD/COPY through S3, the Data API; query discipline stays in `sql`), cost
+  awareness (know what a command spends before running it), and the first-time setup walkthrough
+  (CLI install without sudo, SSO-vs-keys auth done on the human's side, creating the identity +
+  attaching the policy, verifying the boundary). Load when provisioning or touching AWS — or
+  when `aws` isn't installed yet. Triggers: AWS, S3, bucket, boto3, aws cli, IAM, role,
+  Redshift, UNLOAD, COPY, s3 sync, presigned URL, cloud storage, DVC remote s3, aws profile,
+  SSO, install aws cli, aws configure, aws not found, set up the role, connect to AWS.
 ---
 
 # infra-aws — AWS through a role that can't hurt you much
@@ -42,6 +45,51 @@ yourself, then attach it. Its shape, which the human should verify survives thei
 
 Sanity check before any work: `aws sts get-caller-identity` — confirm you are the scoped role,
 not someone's admin profile.
+
+## First-time setup — the walkthrough (agent and human each have a part)
+Run this top to bottom when AWS work starts on a fresh box. Steps are split deliberately:
+the agent does the mechanical parts; the human does everything that touches admin power or a
+secret.
+
+**1. CLI present?** `command -v aws || aws --version`. If missing, two install paths:
+- **Agent-runnable, no sudo:** download the official v2 bundle and install user-local —
+  `curl -o /tmp/awscliv2.zip "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"`,
+  `unzip`, then `./aws/install -i ~/.local/aws-cli -b ~/.local/bin` (ensure `~/.local/bin` is
+  on PATH). Never pipe the download into a shell (the bash hook blocks it anyway); the
+  system-wide install needs sudo, which this agent deliberately cannot run — that variant is
+  the human's, via the `!` prefix in their prompt.
+- `uv add boto3` for the Python side (per `env-uv`; it shares the CLI's credential chain).
+
+**2. Authenticate — on the human's side, always.** Access keys and SSO logins must never pass
+through the chat (a pasted secret lives in the transcript forever — security canon). Ask the
+user to run, in their own terminal or via the `!` prefix:
+- **Preferred:** `aws configure sso` (short-lived credentials; needs the org's SSO start URL),
+  then `aws sso login --profile <profile>` when sessions expire.
+- **Fallback:** `aws configure --profile claude-ds` with an access key **they** created for the
+  scoped identity (console → IAM → the user → security credentials). The agent's job is to say
+  *which identity* the key must belong to — never to receive the key.
+Set the project to the profile via config/env (`AWS_PROFILE=claude-ds` in `.env` is fine —
+it's a *name*, not a secret).
+
+**3. Create the identity + attach the policy — human, with their admin profile.** The agent
+prepares; the human executes (the agent's own role has `iam:*` denied, and the hook asks on
+any `aws iam` mutation — both by design). Prepare for them: the filled-in policy JSON (from
+the template, placeholders replaced), and this sequence —
+```bash
+aws iam create-policy --policy-name claude-for-datascience \
+    --policy-document file://aws-iam-policy.filled.json
+aws iam create-user --user-name claude-for-datascience        # or create-role + trust policy for SSO/assume
+aws iam attach-user-policy --user-name claude-for-datascience \
+    --policy-arn arn:aws:iam::ACCOUNT-ID:policy/claude-for-datascience
+```
+Console clicking works identically (IAM → Policies → Create from JSON → attach). Either way,
+**the human reads the policy before attaching** — the review is the point, not a formality.
+
+**4. Verify the boundary, both directions.** As the new profile:
+`aws sts get-caller-identity` (the scoped identity, not admin) ·
+`aws s3 ls s3://PROJECT-PREFIX-data` (allowed path works) · and one **expected failure**, e.g.
+`aws iam list-users` — it must be denied. A boundary you never saw refuse anything is a
+boundary you haven't tested.
 
 ## S3 — the project's durable data layer
 - **Bucket convention:** `PROJECT-PREFIX-data` (raw + processed, versioned, lifecycle to IA/
