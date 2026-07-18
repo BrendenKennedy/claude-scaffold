@@ -39,6 +39,8 @@ fresh project gets **empty stores**; kept this repo's dev memory committed (user
 ## Follow-ups
 - If the store format ever changes, update both the live file and its `templates/memory/` blank → ../roadmap.md
 
+- Branch: `ship-clean-stores` · commit `c42ea74`
+
 ## Related
 - Completes the pre-dogfooding trilogy: [session-start-orientation](2026-07-18-session-start-orientation.md)
   (orientation in) → [scaffold-self-assessment-loop](2026-07-18-scaffold-self-assessment-loop.md)
