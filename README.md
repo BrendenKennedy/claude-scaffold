@@ -83,8 +83,9 @@ flowchart LR
 │   ├── (chassis)             # process · governance · memory · testing · wave-planning
 │   ├── (CV/DS domain)        # datasets · annotation · training · evaluation · pipelines · notebooks
 │   ├── (tool, /intake-gated) # env-uv · tracking-mlflow · config-hydra · data-dvc · tracking-wandb
+│   │                         #   · finetune-unsloth — each version-pinned; /skill-update syncs them
 │   └── _example/             # how to write a skill
-├── commands/                 # setup · intake · bootstrap · gate · review · wrapup · _TEMPLATE
+├── commands/                 # setup · intake · bootstrap · gate · skill-update · review · wrapup · _TEMPLATE
 ├── hooks/
 │   ├── validate-python.py    # ruff format + check on every edited .py
 │   ├── validate-bash.sh      # blocks rm -rf of root/home

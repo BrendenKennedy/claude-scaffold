@@ -67,6 +67,12 @@ paths and they're read on demand — keeps `SKILL.md` scannable.
 
 **One skill = one domain.** If it sprawls, split it. A stale skill is worse than none — keep it current.
 
+**Tool skills carry a version pin.** A `**Pinned:** <pkg>==<version> · verified <date>` line sits
+directly under the H1 — the version the skill's facts were last verified against, which must track
+the *locked dependency*, never lead it. `/skill-update` owns bumps (drift check → changelog research
+→ empirical verify → edit → pin). Git history is the archive of older skill versions — no parallel
+old copies in the tree.
+
 ---
 
 ## Agents — `agents/<name>.md`

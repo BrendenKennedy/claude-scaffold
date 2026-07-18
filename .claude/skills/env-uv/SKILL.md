@@ -15,6 +15,8 @@ description: >
 
 # env-uv — the uv + CUDA environment workflow
 
+**Pinned:** uv, torch — unpinned · authored 2026-07 · run `/skill-update env-uv` once the env exists
+
 > On-demand: load this before installing a package, standing up the env on a new machine, or when the
 > GPU isn't visible to torch. It carries the commands that work **today** — don't reach for `pip install`
 > or hand-edit `pyproject.toml`; both desync the lockfile.

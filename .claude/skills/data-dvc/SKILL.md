@@ -13,6 +13,8 @@ description: >
 
 # data-dvc — data & model versioning with DVC
 
+**Pinned:** dvc — unpinned · authored against 3.x · run `/skill-update data-dvc` once the dep is installed
+
 > On-demand: load this before checking a dataset or checkpoint into the repo, wiring a DVC remote, or
 > building a `dvc.yaml` pipeline. DVC keeps big files OUT of git — you commit a small pointer, not the
 > bytes. If you're about to `git add data/…` a multi-GB file, stop and use `dvc add` instead.

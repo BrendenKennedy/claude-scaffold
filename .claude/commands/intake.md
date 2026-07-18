@@ -70,6 +70,8 @@ present those as the pre-selected option and confirm, don't re-ask blind:
 - **Landing convention** — merge branches into `main` locally *(default)* / push + open a PR. And:
   required commit trailer — none *(default)* / a custom line (e.g. a `Co-Authored-By`). Fills the
   `memory` skill's commit/land placeholders, which `/wrapup` runs against.
+- **LLM fine-tuning** — ask **only if** the definition doc's archetype involves LLM work: Unsloth
+  *(default when applicable)* / none. Flips `finetune-unsloth`.
 
 Capture the five answers before touching any file.
 
@@ -85,6 +87,7 @@ Edit `.claude/settings.json` — set each key to `"on"` or `"off"` from the answ
 | `config-hydra` | config = Hydra |
 | `config-omegaconf` | config = plain OmegaConf |
 | `data-dvc` | data versioning = DVC |
+| `finetune-unsloth` | LLM fine-tuning = Unsloth |
 
 Exactly one tracker key and one config key should be `on`; the unchosen siblings go `off`. If the tracker
 or data-versioning answer is "none", leave all keys in that group `off`. **Note:** the `config-omegaconf`

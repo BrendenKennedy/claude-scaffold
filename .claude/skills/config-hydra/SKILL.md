@@ -14,6 +14,8 @@ description: >
 
 # config-hydra — composing run config with Hydra
 
+**Pinned:** hydra-core, omegaconf — unpinned · authored against hydra-core 1.3 · run `/skill-update config-hydra` once the dep is installed
+
 > On-demand: load this before adding a hyperparameter, wiring a config group, running a sweep, or when
 > tracing where a value came from. Hydra **composes** the config that runs from many small files plus CLI
 > overrides — the composed object is the source of truth, so resolve and log it (see `tracking-mlflow`).

@@ -15,6 +15,8 @@ description: >
 
 # tracking-mlflow — recording experiments so they're comparable & reproducible
 
+**Pinned:** mlflow — unpinned · authored against 3.x · run `/skill-update tracking-mlflow` once the dep is installed
+
 > On-demand: load this before adding tracking to a train/eval loop, or when you can't reconstruct what a
 > past run did. A run is only worth logging if it's **reproducible** — the resolved config + code version
 > must be in it (see the closing rule). Never hand-roll a CSV logger where a run belongs.
@@ -78,6 +80,22 @@ Autolog and manual `log_*` coexist — autolog for the boilerplate, manual for w
   ```python
   mlflow.set_tracking_uri(cfg.tracking.uri)   # conf/config.yaml: uri: ${oc.env:MLFLOW_TRACKING_URI}
   ```
+
+## Model Registry — from "a good run" to "the model we serve"
+The registry is the named, versioned lineage layer on top of runs — use it when a model outlives
+its experiment (gets deployed, shared, or compared across time), not for every checkpoint:
+- **Register from a run:** `mlflow.register_model(f"runs:/{run.info.run_id}/model", "<model name>")`,
+  or log-and-register in one step via `log_model(..., registered_model_name=...)`. Each register
+  bumps an auto-incremented **version**; the link back to the source run (and thus its config + git
+  SHA) is the provenance chain — never register a model whose run lacks them.
+- **Aliases, not stages.** Mutable stages (`Staging`/`Production`) are deprecated; use **aliases**:
+  `MlflowClient().set_registered_model_alias("<name>", "champion", version)` and load with
+  `mlflow.pyfunc.load_model("models:/<name>@champion")`. Promotion = moving the alias — which is a
+  governed act: consult `governance` → `model-governance` (model card, eval evidence) before moving
+  `@champion`, and record the decision.
+- **Division of labor with DVC:** the registry tracks *which model is which* (lineage, aliases);
+  `data-dvc` versions *bytes* (raw checkpoints, datasets). A served model lives in the registry;
+  its training artifacts stay DVC-tracked.
 
 ## Compare runs
 - **`mlflow ui --backend-store-uri sqlite:///mlflow.db`** (add `--host`/`--port` as needed) — opens the UI.

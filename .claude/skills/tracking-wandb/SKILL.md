@@ -14,6 +14,8 @@ description: >
 
 # tracking-wandb — recording experiments so they're comparable & reproducible
 
+**Pinned:** wandb — unpinned · authored against 0.x (2026-07) · run `/skill-update tracking-wandb` once the dep is installed
+
 > On-demand: load this before adding tracking to a train/eval loop, or when you can't reconstruct what a
 > past run did. A run is only worth logging if it's **reproducible** — the resolved config + code version
 > must be in it (see the closing rule). Never hand-roll a CSV logger where a run belongs.

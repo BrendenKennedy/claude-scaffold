@@ -6,9 +6,9 @@ Doubles as the scope **parking lot** (PROCESS.md §3.3): promotion into the v1 c
 written gate + a decision-log line.
 
 ## Now / in progress
-- Skill coverage for general-DS gaps (see 2026-07-18 session): LLM fine-tuning (unsloth, tool-gated),
-  MLflow model registry (extend `tracking-mlflow`), monitoring/observability (deferred until first
-  deploy — P7 covers concepts), tabular/classical-DS workflow skill (if archetype used)
+- Skill coverage, remaining: monitoring/observability skill (deferred until first deploy — P7
+  covers concepts), tabular/classical-DS workflow skill (add if the archetype gets used),
+  `llm-eval` companion to `finetune-unsloth`, HPO (Optuna) tool skill
 
 ## Next
 - Release v0.4.0: VERSION + CHANGELOG for the process framework + efficiency pass
@@ -21,5 +21,7 @@ written gate + a decision-log line.
 - Stop-hook gate-debt warning (stricter §3.8 enforcement)
 
 ## Done (recent)
+- `finetune-unsloth` (tool-gated) + MLflow Model Registry section + version pins on all tool
+  skills + `/skill-update` — 2026-07-18
 - Process framework integration + context-efficiency pass — 2026-07-18,
   [session note](sessions/2026-07-18-process-and-efficiency.md), commit `436a1f6`

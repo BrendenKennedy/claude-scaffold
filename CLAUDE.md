@@ -34,7 +34,9 @@ Auto-surface by description (that text is the entire routing surface — see
 - **Always-on workflow (CV/DS):** `datasets` · `annotation` · `training` · `evaluation` ·
   `pipelines` · `notebooks`
 - **Tool-gated** (one tool each; `/intake` flips via `skillOverrides`): `env-uv` (on) ·
-  `tracking-mlflow` (on) · `config-hydra` (on) · `data-dvc` (on) · `tracking-wandb` (off)
+  `tracking-mlflow` (on) · `config-hydra` (on) · `data-dvc` (on) · `tracking-wandb` (off) ·
+  `finetune-unsloth` (off). Each carries a `**Pinned:**` version line — `/skill-update` keeps the
+  facts true for the version the project actually runs.
 
 ## Subagents — `.claude/agents/<name>.md`
 `code-reviewer` (diff review, ML lens) · `software-architect` (read-only planning, project
@@ -48,6 +50,7 @@ architecture pre-loaded) · `data-engineer` (data layer + annotation-ops tooling
 | `/intake` | one-time: project-definition interview, then stack → `skillOverrides` + placeholders |
 | `/bootstrap` | one-time, after `/intake`: generate + prove the project skeleton, back-fill placeholders |
 | `/gate` | phase-gate review per `PROCESS.md` §3.8 — evidence per item, records pass/debt in `memory/process/phase-state.md`, refuses to advance unchecked |
+| `/skill-update` | sync a tool skill to the installed version — pin-vs-`uv.lock` drift check, changelog research, fact updates, pin bump; git history archives old versions |
 | `/review` | review the current `git diff` for bugs + cleanups |
 | `/wrapup` | close out the session — record note (incl. phase + gate debt) → (commit) → land |
 
