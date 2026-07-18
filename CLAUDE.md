@@ -72,7 +72,8 @@ architecture pre-loaded) · `data-engineer` (data layer + annotation-ops tooling
 | `/upgrade` | upgrade an installed project's scaffold to a newer release — stamp-vs-upstream delta via the CHANGELOG, three-way file plan (add / replace-unmodified / ask-on-edited), state and profiles never clobbered |
 | `/report` | draft a deliverable (report / white paper / stakeholder summary / model card) assembled from the repo's records — claims cite run ids; evidence gaps flagged, never filled |
 | `/review` | review the current `git diff` for bugs + cleanups |
-| `/wrapup` | close out the session — record note (incl. phase + gate debt) → (commit) → land |
+| `/wrapup` | close out the session — record note (incl. phase + gate debt + scaffold check) → (commit) → land |
+| `/scaffold-retro` | assess the scaffold itself — cluster `memory/scaffold-journal.md` into themes, promote worth-acting-on ones to roadmap/CHANGELOG; the tooling's meta-loop, run periodically |
 
 ## Hooks — `.claude/hooks/` (wired in `settings.json`)
 | Hook | Event | Does |
@@ -90,6 +91,7 @@ On-demand store, never auto-loaded; read/write process is the `memory` skill.
 `sessions/` (dated summaries) · `reference/` (how-we-do-X notes, incl. `authoring-extensions.md` —
 read it before extending `.claude/` — and `architecture-skills-vs-agents.md`, why skills stay
 in-context and there's no orchestrator agent) · `roadmap.md` (backlog; doubles as the scope parking lot) ·
+`scaffold-journal.md` (observed quality of the scaffold itself — dogfooding wins/friction/gaps; harvested by `/scaffold-retro`) ·
 `policy/` (governance canon: `data-governance.md`, `model-governance.md`, `security.md`) ·
 `process/` (live `PROCESS.md` state: `project-definition.md`, `phase-state.md`, `risk-register.md`,
 `scope-ledger.md`, `decision-log.md`, `resources.md` — the resource matrix: every

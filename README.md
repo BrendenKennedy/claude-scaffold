@@ -85,8 +85,8 @@ flowchart LR
 | **Skills** | On-demand playbooks in three tiers: always-on DS core, tool-gated (MLflow ↔ W&B, version-**pinned**), lane-gated by archetype. |
 | **Subagents** | Specialists — data engineering, model building, error analysis, review with an ML lens — preloaded with the skills their job needs. |
 | **Hooks** | Deterministic enforcement around tool calls; the security floor. |
-| **Commands** | One-time setup (`/setup`, `/intake`, `/bootstrap`), reviews (`/gate`, `/review`), deliverables (`/report`), maintenance (`/skill-update`, `/upgrade`), close-out (`/wrapup`). |
-| **Memory** | Session notes, roadmap, policy canon, live process state — pulled on demand, never auto-loaded. |
+| **Commands** | One-time setup (`/setup`, `/intake`, `/bootstrap`), reviews (`/gate`, `/review`), deliverables (`/report`), maintenance (`/skill-update`, `/upgrade`, `/scaffold-retro`), close-out (`/wrapup`). |
+| **Memory** | Session notes, roadmap, scaffold journal, policy canon, live process state — pulled on demand, never auto-loaded. |
 
 Stack defaults: `uv` · MLflow · Hydra · DVC — swappable at `/intake`. No archetype is
 privileged (one caveat: `/bootstrap`'s generated skeleton is currently the deep-learning

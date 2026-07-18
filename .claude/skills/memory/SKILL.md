@@ -25,6 +25,7 @@ description: >
 | `.claude/memory/sessions/` | dated refined summaries of each substantive session (`YYYY-MM-DD-<slug>.md`, newest-last) |
 | `.claude/memory/roadmap.md` | living backlog: next · in-progress · done-recent |
 | `.claude/memory/reference/` | stable "how we do X" notes that recur but don't warrant a full skill |
+| `.claude/memory/scaffold-journal.md` | observed quality of the **scaffold itself** (skills/agents/commands/hooks) — dogfooding wins/friction/coordination-gaps/missing-features; `/scaffold-retro` harvests it |
 
 (`.claude/memory/policy/` also lives under memory — authored governance canon — but it's owned by the `governance` skill, not this one.)
 
@@ -38,6 +39,11 @@ Triggers: "what did we do / decide on X", "in the last few sessions", "remind me
    a transcript (~one screen: outcomes + current state, not every step). Cross-link related sessions.
 2. Update `roadmap.md`: check off finished items, move them to **Done (recent)**, add follow-ups.
 3. If you established a reusable "how we do X", add/adjust a `reference/` note (or promote it to a skill).
+4. **Scaffold check** (self-observed — you were in the session): did any part of the `.claude/` config
+   help or hurt? A skill that didn't surface, an agent handoff that dropped context, a hook that
+   fought you, a command you wished existed? Log a row to `scaffold-journal.md` per its schema.
+   "None this session" is a valid, common answer — don't manufacture entries. (`/scaffold-retro`
+   later clusters these into what to build; this step just captures them while specifics are fresh.)
 
 Naming: ISO date + kebab slug (`2026-01-15-project-bootstrap.md`).
 

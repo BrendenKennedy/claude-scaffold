@@ -14,6 +14,9 @@ written gate + a decision-log line.
 - Watch skill surfacing after the description rewrite; sharpen under-triggering descriptions
 - Dogfood-tune the `SessionStart` briefing: is its length right, and does the "finish before
   handing back" DoD actually fire the `/wrapup` offer? Adjust `session-orient.py` / CLAUDE.md if not
+- Exercise the scaffold loop end-to-end while dogfooding: wrapup scaffold-check populates
+  `scaffold-journal.md`, then run the first `/scaffold-retro` and confirm a friction→improved trail
+  forms. Watch that the wrapup check doesn't decay into rote "none" (capture-the-moment is the real path)
 
 ## Someday / maybe
 - Multi-archetype `/bootstrap` skeletons (tabular/timeseries/LLM entry points — the skills now exist; the skeleton is still Hydra+CV-shaped)
@@ -23,6 +26,9 @@ written gate + a decision-log line.
 - Data-validation tool skill (pandera/great-expectations)
 
 ## Done (recent)
+- Scaffold self-assessment loop — `scaffold-journal.md` + wrapup scaffold-check + `/scaffold-retro`;
+  the tooling's meta-loop (parallel to PROCESS.md Part V) — 2026-07-18,
+  [session note](sessions/2026-07-18-scaffold-self-assessment-loop.md), branch `scaffold-journal`.
 - `SessionStart` orientation hook + "finish before handing back" DoD convention — the completion
   contract (mechanical + judgment halves); no orchestrator agent — 2026-07-18,
   [session note](sessions/2026-07-18-session-start-orientation.md), branch `session-start-orientation`, commit `e5c8083`.

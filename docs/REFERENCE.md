@@ -62,6 +62,7 @@
 | [`/intake`](../.claude/commands/intake.md) | One-time onboarding — the "what are we building?" definition interview (archetype, T1, anti-pattern challenge), then the stack interview — write skillOverrides and fill… |
 | [`/report`](../.claude/commands/report.md) | Draft a deliverable — technical report, white paper, stakeholder summary, or model card — assembled from the repo's own records (project definition, decision log,… |
 | [`/review`](../.claude/commands/review.md) | Review the current diff by dispatching the code-reviewer agent (correctness + the ML/CV lens) |
+| [`/scaffold-retro`](../.claude/commands/scaffold-retro.md) | Assess how the `.claude/` scaffold itself is performing — read the scaffold journal, cluster recurring friction/wins/gaps into themes, and with the user promote the… |
 | [`/setup`](../.claude/commands/setup.md) | Full one-time project setup in one guided session — git preflight, then /intake (definition + stack) → checkpoint commit → /bootstrap (skeleton, proven) → checkpoint… |
 | [`/skill-update`](../.claude/commands/skill-update.md) | Sync a tool skill to the version the project actually runs — compare its **Pinned:** line against the locked dependency, research what changed between those versions,… |
 | [`/upgrade`](../.claude/commands/upgrade.md) | Upgrade this project's installed scaffold to a newer claude-for-datascience release — read the `.claude/scaffold-version` stamp, walk the CHANGELOG delta, then apply… |

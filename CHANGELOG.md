@@ -28,6 +28,13 @@ versions follow [SemVer](https://semver.org/) per the stability contract in
   notes its generated skeleton is currently the deep-learning shape.
 
 ### Added
+- **Scaffold self-assessment loop** — the tooling's meta-loop, mirroring PROCESS.md Part V (which
+  versions the *methodology*): `.claude/memory/scaffold-journal.md` records how the `.claude/` config
+  performs in use (wins / friction / coordination-gaps / missing-features), the `memory` skill's
+  close-out (and `/wrapup`) gains a skippable **scaffold check** that captures it, and the new
+  **`/scaffold-retro`** command clusters the journal into themes and — with the user — promotes the
+  worth-acting-on ones into roadmap/CHANGELOG items, tying resolved friction to the version that
+  fixed it. Answers "what's working, what isn't, what's missing, what's improving" about the scaffold.
 - **`SessionStart` orientation hook (`.claude/hooks/session-orient.py`)** — the missing bookend to
   `/wrapup`. On a fresh session (`startup`/`clear`) it injects a compact "where are we" briefing —
   current phase, open gate debt, last session's focus + state + follow-ups, roadmap next — so a
