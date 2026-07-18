@@ -40,7 +40,8 @@ Auto-surface by description (that text is the entire routing surface — see
   lanes — `tabular` · `timeseries` · `wrangling` · `sql` · `data-acquisition` ·
   `finetune-unsloth` · `llm-eval` · `serving` · `monitoring` (those two flip at deploy) ·
   `infra-aws` (S3+Redshift via a least-privilege IAM role — starter policy in
-  `.claude/templates/`) · `containers` (Docker/Compose; k8s deliberately parked).
+  `.claude/templates/`) · `containers` (Docker/Compose; k8s deliberately parked) ·
+  `local-stack` (self-hosted/offline twins: MinIO, CVAT, Postgres+extensions).
   Tool skills carry a `**Pinned:**` version line — `/skill-update` keeps the facts true for the
   version the project actually runs.
 

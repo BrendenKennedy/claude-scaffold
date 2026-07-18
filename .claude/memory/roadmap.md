@@ -21,6 +21,7 @@ written gate + a decision-log line.
 - Stop-hook gate-debt warning (stricter §3.8 enforcement)
 
 ## Done (recent)
+- Release v0.9.0: self-hosted pass (local-stack: MinIO, CVAT, Postgres+extensions) — 2026-07-18
 - Release v0.8.0: infrastructure pass (infra-aws + IAM boundary template, containers, hook tiers) — 2026-07-18
 - Pushed to origin; GitHub releases v0.4.0–v0.7.0 created from CHANGELOG — 2026-07-18
 - Release v0.7.0: end-to-end pass (sql, data-acquisition, serving, wrangling lanes; ad-hoc mode; fairness slices) — 2026-07-18

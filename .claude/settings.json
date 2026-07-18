@@ -49,7 +49,8 @@
     "wrangling": "off",
     "serving": "off",
     "infra-aws": "off",
-    "containers": "off"
+    "containers": "off",
+    "local-stack": "off"
   },
   "hooks": {
     "PreToolUse": [

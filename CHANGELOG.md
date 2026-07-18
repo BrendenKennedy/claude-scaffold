@@ -4,6 +4,23 @@ All notable changes to claude-for-datascience. Format follows [Keep a Changelog]
 versions follow [SemVer](https://semver.org/). Installed projects can compare their
 `.claude/scaffold-version` stamp against these entries to see what they're missing.
 
+## [0.9.0] — 2026-07-18
+
+The self-hosted pass: offline/air-gapped twins of the cloud pieces. Because everything
+S3-compatible takes an endpoint override, the existing DVC/MLflow/boto3 workflows run unchanged
+against local services — only the endpoints move.
+
+### Added
+- **`local-stack`** (lane, off; flips `containers` with it) — the self-hosted service catalog:
+  **MinIO** as S3-compatible blob storage (endpoint-url wiring for DVC remotes / MLflow
+  artifacts / boto3; credentials via `dvc remote modify --local`, never committed; per-bucket
+  versioning), **CVAT** self-hosted for annotation (pinned release tag, shared-storage mount so
+  datasets don't upload through the browser, export-to-COCO-immediately per the `annotation`
+  discipline), **local Postgres** (init scripts so a fresh `compose up` reproduces the database
+  shape, healthchecks), and the **extension matrix** (pgvector / TimescaleDB / PostGIS / Apache
+  AGE — one prebuilt image per family; combining is a deliberate custom image), plus the
+  backups-are-now-your-job rule.
+
 ## [0.8.0] — 2026-07-18
 
 The infrastructure pass: the scaffold learns to manage the infrastructure under the pipelines —

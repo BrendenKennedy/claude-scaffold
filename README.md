@@ -94,6 +94,7 @@ flowchart LR
 │   ├── (lane, /intake-gated) # tabular · timeseries · wrangling · sql · data-acquisition
 │   │                         #   · finetune-unsloth · llm-eval · serving · monitoring
 │   │                         #   · infra-aws (least-privilege IAM role) · containers (Docker/Compose)
+│   │                         #   · local-stack (offline twins: MinIO · CVAT · Postgres+extensions)
 │   │                         #   — flipped by project archetype, so a CV user never pays for them
 │   └── _example/             # how to write a skill
 ├── commands/                 # setup · intake · bootstrap · gate · skill-update · report · review

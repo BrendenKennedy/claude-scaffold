@@ -101,6 +101,7 @@ Edit `.claude/settings.json` — set each key to `"on"` or `"off"` from the answ
 | `monitoring` | the project is deploying — usually flipped later, at P7, not at intake |
 | `infra-aws` | cloud = AWS (from the definition doc) — remind the user the IAM starter policy (`.claude/templates/aws-iam-policy.json`) needs *their* review + attachment |
 | `containers` | the project builds images (training/serving) or runs local support services via Compose |
+| `local-stack` | services must run self-hosted/offline — local annotation (CVAT), S3-compatible blob store (MinIO), local Postgres (+extensions). Flips `containers` with it (Compose underpins it) |
 
 Exactly one tracker key and one config key should be `on`; the unchosen siblings go `off`. If the tracker
 or data-versioning answer is "none", leave all keys in that group `off`. **Lane skills flip from the
