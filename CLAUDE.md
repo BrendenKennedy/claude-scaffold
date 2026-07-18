@@ -79,7 +79,8 @@ read it before extending `.claude/` — and `architecture-skills-vs-agents.md`, 
 in-context and there's no orchestrator agent) · `roadmap.md` (backlog; doubles as the scope parking lot) ·
 `policy/` (governance canon: `data-governance.md`, `model-governance.md`, `security.md`) ·
 `process/` (live `PROCESS.md` state: `project-definition.md`, `phase-state.md`, `risk-register.md`,
-`scope-ledger.md`, `decision-log.md`)
+`scope-ledger.md`, `decision-log.md`, `resources.md` — the resource matrix: every
+service/store/endpoint + env keys + credential references, synced with `.env.example`)
 
 ## Other config
 `settings.json` (permissions + hooks + `skillOverrides`) · `scripts/` (hook/command helpers) ·

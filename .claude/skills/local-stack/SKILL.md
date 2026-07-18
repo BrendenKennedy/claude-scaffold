@@ -26,7 +26,9 @@ authored 2026-07-18 · run `/skill-update local-stack` against the image tags yo
 > scaffold already knows, so the *workflows don't change* — only endpoints do. Compose/image
 > mechanics (digest pinning, named volumes, `.env` wiring, the down `-v` hazard) are the
 > `containers` skill's and apply to everything here. If you're going online-first instead,
-> this skill's twin is `infra-aws`.
+> this skill's twin is `infra-aws`. **Every service stood up here gets a row in the resource
+> matrix** (`.claude/memory/process/resources.md`) + its keys in `.env.example`, same commit —
+> that file is how the rest of the stack knows where everything is accessed.
 
 ## MinIO — S3 without AWS
 ```yaml
@@ -59,7 +61,9 @@ directory, set `CVAT_HOST` if not localhost, then create the admin:
 `docker exec -it cvat_server python3 ~/manage.py createsuperuser`.
 - **Mount the data as shared storage** (CVAT's mounted-share mechanism) so annotators attach
   images from the server path — uploading a 50 GB dataset through the browser is the failure
-  mode.
+  mode. Alternatively (or additionally) wire CVAT's **cloud-storage backend at MinIO** — CVAT
+  speaks S3-compatible storage, so the same `${MINIO_ENDPOINT}` + bucket from the matrix serves
+  both DVC and CVAT; one blob store, two consumers, recorded once.
 - It's heavy (several GB of images, real RAM); on a laptop, stop it when not labeling.
 - **Export to COCO immediately and version the export** (`data-dvc`) — per `annotation`, the
   tool's internal DB is never the artifact of record. The spec/IAA/gold-set process is

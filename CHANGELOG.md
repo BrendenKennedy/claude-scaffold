@@ -4,6 +4,17 @@ All notable changes to claude-for-datascience. Format follows [Keep a Changelog]
 versions follow [SemVer](https://semver.org/). Installed projects can compare their
 `.claude/scaffold-version` stamp against these entries to see what they're missing.
 
+## [Unreleased]
+
+### Added
+- **Resource matrix** (`.claude/memory/process/resources.md`, shipped as a seed) — the single
+  inventory of every service/store/endpoint a project touches: endpoint, env keys, credential
+  *by reference* (never values), owner skill, backup status. The rule: provisioning anything
+  updates the matrix **and `.env.example` in the same commit** — the two must agree. Written by
+  the infra lanes (`infra-aws`, `local-stack`, `containers`, `serving`) and seeded by
+  `/bootstrap`; CVAT's S3-compatible storage need is the motivating case (one MinIO bucket,
+  recorded once, consumed by DVC and CVAT both).
+
 ## [0.9.0] — 2026-07-18
 
 The self-hosted pass: offline/air-gapped twins of the cloud pieces. Because everything

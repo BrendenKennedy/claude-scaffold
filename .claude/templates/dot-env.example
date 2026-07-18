@@ -1,6 +1,9 @@
 # .env.example — the env vars this project's entry points read.
 # Copy to .env and fill in. .env is gitignored and loaded by src/<pkg>/env.py at each entry
 # point's top (Hydra's ${oc.env:...} reads the PROCESS env — nothing works without this file).
+#
+# Kept in sync with the resource matrix (.claude/memory/process/resources.md): every key here
+# has a row there saying what it reaches and where its credential lives — same-commit rule.
 
 # Root of all datasets — conf/dataset/*.yaml resolve data_dir against this.
 DATA_ROOT=

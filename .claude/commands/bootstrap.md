@@ -175,7 +175,10 @@ Non-negotiables when emitting it:
 | `project-ci.yml` | `.github/workflows/ci.yml` | nothing — it runs exactly the offline tier |
 
 Also ensure the target's `.gitignore` covers `.env` (add it if absent — an `.env.example` next to an
-unignored `.env` is a credential leak waiting to happen). Report each instantiated file in §7.
+unignored `.env` is a credential leak waiting to happen). Then seed the **resource matrix**
+(`.claude/memory/process/resources.md`) with the rows the skeleton just created — `DATA_ROOT`
+and the tracker (env keys, credential references) — replacing the illustrative rows; the matrix
+and `.env.example` stay in sync from this moment on. Report each instantiated file in §7.
 
 ## 4. Never clobber (but *do* extend)
 

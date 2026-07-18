@@ -77,6 +77,9 @@ volumes:
   deletes them — the bash hook confirm-gates it; treat volumes like `mlflow.db`, not like cache.
 - Secrets ride `env_file: .env` (gitignored, per the security canon) — never literal in YAML.
 - Pin image tags **with digests**; `latest` is an unpinned dependency by another name.
+- **Every compose service gets a row in the resource matrix**
+  (`.claude/memory/process/resources.md`) + its env keys in `.env.example`, same commit — ports,
+  volumes, and credential references live there, not in tribal memory.
 
 ## Gotchas
 - Rebuild triggers: `uv.lock` changes must rebuild the sync layer — order COPY of lockfile

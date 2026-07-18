@@ -30,6 +30,7 @@ description: >
 | Risk register | `.claude/memory/process/risk-register.md` | live risks (T4); reviewed at every gate; new risks logged the moment they're found |
 | Scope ledger | `.claude/memory/process/scope-ledger.md` | the v1 contract; the parking lot **is** `.claude/memory/roadmap.md` (one backlog, not two) |
 | Decision log | `.claude/memory/process/decision-log.md` | append-only process-level decisions (scope, metric, kill/pivot, gate judgment calls) — via the `governance` protocol |
+| Resource matrix | `.claude/memory/process/resources.md` | every service/store/endpoint the stack touches — env keys + credential references; kept in sync with `.env.example`; written by the infra lanes |
 | Enforcement | `/gate` command | walks the current gate demanding evidence; records PASS or gate debt; refuses to advance otherwise |
 
 ## The operating loop

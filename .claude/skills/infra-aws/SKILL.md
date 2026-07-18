@@ -46,6 +46,11 @@ yourself, then attach it. Its shape, which the human should verify survives thei
 Sanity check before any work: `aws sts get-caller-identity` — confirm you are the scoped role,
 not someone's admin profile.
 
+**Every bucket/cluster provisioned gets a row in the resource matrix**
+(`.claude/memory/process/resources.md`) + its env keys in `.env.example`, same commit — the
+matrix is how the rest of the stack knows where everything is accessed and where each
+credential lives (by reference).
+
 ## First-time setup — the walkthrough (agent and human each have a part)
 Run this top to bottom when AWS work starts on a fresh box. Steps are split deliberately:
 the agent does the mechanical parts; the human does everything that touches admin power or a

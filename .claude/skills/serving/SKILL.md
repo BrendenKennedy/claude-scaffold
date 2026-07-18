@@ -69,7 +69,8 @@ without a parity check is a different model with the same name. Pin the exported
 its source run (`data-dvc` + run id).
 
 ## Launch checklist
-Prediction logging wired (inputs sampled, outputs, version — `monitoring` is unbootable
-without it) · load basics set deliberately (worker count, request timeout, batch size; measure
+The endpoint/batch job registered in the resource matrix
+(`.claude/memory/process/resources.md`: address, env keys, auth reference) · prediction
+logging wired (inputs sampled, outputs, version — `monitoring` is unbootable without it) · load basics set deliberately (worker count, request timeout, batch size; measure
 p95 under realistic load, don't guess) · rollback = moving the registry alias back (rehearse it
 once) · shadow/canary before full traffic (per `monitoring`).
