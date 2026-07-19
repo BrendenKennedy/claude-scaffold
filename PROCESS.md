@@ -108,6 +108,7 @@ Iteration is expected: evaluation results routinely send you back to features or
 - Build the source inventory (Template T2): endpoint, auth, rate limits, licensing/ToS, update cadence
 - Pull *sample* data from every source before committing to it
 - Data quality audit: missingness, ranges, duplicates, encoding traps, weird distributions
+- **First predictive-signal probe** (once a split and any candidate columns exist): a cheap, train-only single-feature-AUC / mutual-information / correlation pass vs the target — an early read on whether the data plausibly carries learnable signal, hardened into the P3 go/no-go (see `eda`)
 - Design the acquisition plan: caching strategy, retry/backoff, rate-limit budget math
 - Log discovered risks into the risk register
 
@@ -169,6 +170,7 @@ project/
 - [ ] Raw data immutability rule is enforced by structure, not discipline
 - [ ] Schema supports the aggregate queries Phase 4 will need (tested with one real query)
 - [ ] Environment is pinned and reproducible
+- [ ] **Predictive-signal go/no-go recorded** (train-only screen — single-feature AUC/MI + a quick multivariate read vs the trivial baseline; see `eda`). An explicit written call that there is enough signal to justify the P4/P5 spend — a weak result is a stop-and-rethink *before* feature engineering, not a discovery deferred to the modeling sweep. (Caveat noted in the record: adversarial targets and split-shift ceilings are the baseline step's job, not the screen's — a strong screen still doesn't excuse skipping baselines.)
 
 ---
 
@@ -403,6 +405,10 @@ Run this loop across three or four projects and the result is a personal methodo
 
 ### Changelog
 ```
+0.3.0 (2026-07-19) — Predictive-signal go/no-go: a train-only single-feature-AUC / MI /
+                     multivariate screen becomes a P2 key activity + a P3 exit-gate item, so
+                     "is there enough signal to fund P4/P5?" is answered in writing before the
+                     modeling spend, not discovered after it (dota2 dogfood lesson; see `eda`).
 0.2.0 (2026-07-18) — Gap fixes: labeling & annotation discipline (P2 conditional activities +
                      gate items, template T8, principle 7, data-centric AI lineage row);
                      compute budgeting (P1 feasibility math + gate + T1 line, P5 experiment

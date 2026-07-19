@@ -266,7 +266,8 @@ command's job is to fill a void; the moment there's real code, the user's code w
 That's a rule about *replacing* files, not touching them. Additive edits to pre-existing files are expected
 and correct — do them, and report each: the smoke test (repoint determinism at `seed_everything`, add the
 leakage test), the package `__init__.py` (a hello-world `main()` can go once real entry points exist), and
-`pyproject.toml` (e.g. registering a pytest marker).
+`pyproject.toml` (e.g. registering a pytest marker, and a `[tool.ruff] line-length = 100` block so the
+post-edit ruff hook doesn't throw un-autofixable E501 on prose-heavy modules — see `env-uv`).
 
 The line: **add to a file, never rewrite it out from under the user.** If an existing file's *logic* must
 change to make the skeleton work, that's not a bootstrap edit — stop and ask. In particular: if a workaround

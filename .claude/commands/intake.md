@@ -65,13 +65,33 @@ present those as the pre-selected option and confirm, don't re-ask blind:
   `/bootstrap`'s skeleton is Hydra-shaped, so its entry points need adapting to that skill's
   pattern) / argparse (no skill backs argparse; config-over-constants still applies).
 - **Data versioning** — DVC *(default)* / git-lfs / none.
-- **Baseline confirm** — the scaffold assumes **uv** for envs and an **NVIDIA GPU** (local or over SSH).
-  Confirm that holds, and ask whether the GPU box is **aarch64/ARM** (e.g. a Grace-Blackwell / DGX Spark)
-  — because ARM needs the ARM torch index placeholder filled in `env-uv`. If the GPU is remote, also
-  capture the SSH host alias (fills the `notebooks` port-forward example).
+- **Baseline confirm — MANDATORY, ask it; never infer it from the plan doc.** This is the one
+  question in this interview you must not skip or pre-answer from prose — a definition doc's stated
+  hardware is often aspirational or stale, and getting it wrong mis-pins the whole environment. Even
+  when `uv` has already reported the arch, **confirm the real box out loud** with an explicit
+  AskUserQuestion. Capture: (a) env manager is **uv** (scaffold baseline); (b) is there an **NVIDIA
+  GPU** (local or over SSH), or is this **CPU-only**?; (c) is the box **aarch64/ARM** (e.g. a
+  Grace-Blackwell / DGX Spark) — ARM needs the ARM torch index placeholder filled in `env-uv`; (d)
+  if the GPU is remote, the **SSH host alias** (fills the `notebooks` port-forward example); (e) the
+  **storage backend** (local files / SQLite / Postgres / S3 / MinIO / …) — it drives the resource
+  matrix and `.env` keys. *(Dogfood lesson: intake once inferred "CPU laptop / SQLite" from the plan
+  when the real box was a DGX Spark ARM+GPU with Postgres — confirm hardware even when the plan
+  states it.)*
 - **Landing convention** — merge branches into `main` locally *(default)* / push + open a PR. And:
   required commit trailer — none *(default)* / a custom line (e.g. a `Co-Authored-By`). Fills the
   `memory` skill's commit/land placeholders, which `/wrapup` runs against.
+- **Version-control scope of the process backbone** — is `PROCESS.md` + the `.claude/memory/process/`
+  records (definition, phase-state, decision log, risk register) part of the tracked **deliverable**,
+  or kept **all-local**? Ask up front, because it decides `.gitignore`: the common default Python
+  `.gitignore` swallows `.claude/` and sometimes `PROCESS.md`, so a project that means to commit its
+  process record silently doesn't — and `/setup`'s checkpoint commits come up empty. If tracked,
+  ensure the project `.gitignore` does **not** ignore `PROCESS.md` or `.claude/memory/process/`
+  (only truly-local state like `settings.local.json`). Two operational notes to pass on either way:
+  (1) a decision to publish process snapshots into a `docs/` tree means **one canonical home** —
+  the `.claude/memory/process/` copies — regenerated into `docs/`, never hand-mirrored (double-entry
+  drift was the dogfood's highest-frequency friction); (2) **never compound-stage a `.claude/` path
+  with tracked files in one `git add … && git commit`** — if `.claude/` is gitignored, `git add`
+  returns non-zero and the `&&` silently skips the commit.
 - **LLM fine-tuning** — ask **only if** the definition doc's archetype involves LLM work: Unsloth
   *(default when applicable)* / none. Flips `finetune-unsloth` **and** `llm-eval` together (a
   fine-tune you can't measure isn't a deliverable).
@@ -112,6 +132,12 @@ Edit `.claude/settings.json` — set each key to `"on"` or `"off"` from the answ
 Exactly one tracker key and one config key should be `on`; the unchosen siblings go `off`. If the tracker
 or data-versioning answer is "none", leave all keys in that group `off`. **Lane skills flip from the
 archetype in the definition doc (step 0) — no extra question needed; the mapping is the lane rows in the table above.**
+
+> **`skillOverrides` flips need a session boundary before they can be *invoked*.** Editing this file
+> mid-session immediately surfaces a newly-`on` skill's *description* in the listing, but the **Skill
+> tool may still refuse to invoke it** (the invocation gate reads the pre-edit state). Since intake is
+> one-time and `/bootstrap` follows, this rarely bites here — but if a flipped skill won't invoke,
+> that's why: start a fresh session, or read its `SKILL.md` directly in the meantime.
 
 ## 3. Fill the answerable `<PLACEHOLDER>`s
 

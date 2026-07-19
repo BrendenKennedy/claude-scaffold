@@ -63,6 +63,26 @@ Then `uv sync`. For a CPU-only box use `.../whl/cpu`. The wheel must match on **
 Developing over SSH on a remote GPU host? This all runs the same there — the env lives on that box; just
 `uv run` inside the repo over the SSH session.
 
+## When a GPU stack won't co-resolve → an isolated second env
+Some GPU libraries can't share one lock with the base project — their transitive pins conflict with the
+versions your DS stack needs. The one that bites: **RAPIDS** (`cuml-cu13`, `cudf`) drags in a `numba`
+that caps `numpy` *below* what a modern pandas/sklearn base requires, so `uv add cuml-cu13` fails to
+resolve into the project lock (or silently downgrades numpy and breaks everything else).
+
+Don't fight the solver or pin numpy backwards for the whole project. **Isolate the conflicting stack in
+its own env** and treat it as a separate tool:
+- Keep the base `.venv` (project deps) clean and unbroken.
+- Stand up a second env — e.g. `.venv-gpu` with its own `pyproject`/lock (a `[project.optional-dependencies]`
+  extra, a `uv`-workspace member, or a sibling project dir) — holding *only* the GPU stack + the minimum
+  it shares.
+- Invoke it explicitly for the GPU step (`uv run --project .venv-gpu …` or activate it for that script);
+  the main pipeline stays on `.venv`.
+- **Document the split** (which env owns which step, and why) in a short `docs/GPU.md` so the next person
+  doesn't re-hit the resolution wall — the conflict is not obvious from the error.
+
+Rule of thumb: one irreconcilable transitive cap is a signal to *separate envs*, not to bend the base
+env's pins. (Surfaced by the dota2 dogfood — RAPIDS `cuml-cu13` numba-vs-numpy — resolved exactly this way.)
+
 ## GPU sanity check (run after any torch/CUDA change)
 ```bash
 uv run python -c "import torch; print(torch.__version__, torch.cuda.is_available(), \
@@ -76,6 +96,22 @@ uv run python -c "import torch; print(torch.__version__, torch.cuda.is_available
   `.python-version` file so `uv` picks the same interpreter everywhere.
 - CI / a "run it for real" invocation uses `uv sync --frozen` so a stale lock fails loudly instead of
   silently resolving something new.
+
+## Lint config (set line-length once, up front)
+The `validate-python` hook runs `ruff format` + `ruff check --fix` after every edit. `ruff format`
+reflows *code* but **not** prose — it will never wrap a long docstring or comment line, so those throw
+E501 that the autofix can't clear and you end up hand-wrapping prose across several edit round-trips.
+Set the budget once so lines land right the first time; register it in `pyproject.toml` (via a targeted
+Edit — this is config, not a dependency, so the guard allows it):
+
+```toml
+[tool.ruff]
+line-length = 100   # matches the prose budget; keep docstrings/comments ≤ this as you write
+```
+
+100 is the scaffold's convention (ruff's default 88 is tight for prose-heavy modules). It's a limit the
+formatter enforces on code but can't satisfy for you on prose — so the real fix is writing prose to it,
+not chasing E501 after the fact.
 
 ## Gotcha
 `uv run` is the boundary — a command that works in your shell but fails under the agent is almost always

@@ -28,7 +28,11 @@ assent** — a file path, a number, a link, a table row. "Yeah we did that" does
 4. **Verdict — and this is the part that must not bend:**
    - **All items `[x]` or `N/A`-with-reason** → record **PASS** (date + reviewer) in the phase-state
      file's gate history, advance **Current phase** to the next phase, and clear any gate debt for
-     the passed phase.
+     the passed phase. **Then cascade to the backlog:** update `@.claude/memory/roadmap.md` in the
+     same step — move the just-passed gate's item out of **Now / in progress** into **Done (recent)**
+     (dated), and surface the next phase's work in **Now**. The phase ledger and the backlog drift
+     apart otherwise (a recurring dogfood friction: `/gate` advanced the ledger but left the roadmap
+     stale for wrapup to reconcile by hand) — don't leave that reconciliation for later.
    - **Any item unchecked** → record **BLOCKED** in the gate history and list the unchecked items
      under **Gate debt**. Do **not** advance the phase, and do not offer to "advance anyway" — the
      override path is the user editing the phase-state file themselves, deliberately.

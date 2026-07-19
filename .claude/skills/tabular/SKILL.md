@@ -40,6 +40,16 @@ Why it's the rule and not a style choice: `cross_val_score(model, X, y)` now re-
 preprocessing per fold — the only way CV estimates aren't quietly inflated by full-data statistics.
 Fitting a scaler or encoder on all rows first is this lane's normalization-stats leakage.
 
+## Prove the spine on synthetic, then flip to real (the tabular default)
+`/bootstrap`'s tabular skeleton (`train.py`/`evaluate.py`/`factory.py`/`calibrate.py`) runs end-to-end
+on **synthetic data** behind a `dataset.synthetic=true` flag before any real data exists — so the whole
+pipeline (the `ColumnTransformer`, the split, calibration, the tracker wiring) is validated early. When
+the real parquets land, flip `dataset.synthetic=false` and the modeling work is a **config flip, not a
+rebuild**: adding a baseline or a model is one factory line on a spine that already runs. Build this way
+by default — the synthetic run is cheap insurance that the leakage armor and persistence work before real
+data is on the line. *(Dogfood: M6 baselines on real data were a single flag flip on the synthetic-proven
+spine — the pattern paid for itself.)*
+
 ## The model ladder (baselines are gates, not warm-ups)
 1. `DummyClassifier(strategy="most_frequent")` / `DummyRegressor` — the floor every number is read against.
 2. Logistic/linear regression on the same pipeline — interpretable, fast, often embarrassing to beat.

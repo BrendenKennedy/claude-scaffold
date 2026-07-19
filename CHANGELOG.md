@@ -13,6 +13,46 @@ versions follow [SemVer](https://semver.org/) per the stability contract in
 > and the stamp's commit **sha** remains the precise reference (`/upgrade`'s three-way logic
 > keys on the sha, not the number).
 
+## [0.9.0] — 2026-07-19
+
+The **dogfood refining patch**: the scaffold's first full end-to-end run on a real project
+(`dota2-prediction-engine`, P1 intake → P5 close on an honest negative result) logged 18
+scaffold-journal entries; this release is the harvest of that signal. The headline is a new
+methodology gate; the rest is friction ground off components that already worked. Nothing here
+adds or removes a skill/command/agent — every change refines an existing one.
+
+### Added
+- **Predictive-signal go/no-go before the modeling spend** *(the headline lesson)* — the dogfood
+  confirmed a near-random signal ceiling *late*, after the full P4 feature build and P5 modeling
+  sweep, when a cheap train-only screen would have flagged it at P3. So the `eda` skill gains a
+  **predictive-signal screen** (single-feature AUC / mutual-information + a quick multivariate read
+  vs the trivial baseline, train-only), it becomes a **P2 key activity** and a **P3 exit-gate
+  go/no-go item** (PROCESS.md 0.3.0), and the screen's known blind spots (adversarial targets,
+  split-shift) are named so it isn't oversold — baselines remain the true signal test.
+- **Isolated-GPU-env pattern** (`env-uv`) — when a GPU stack won't co-resolve into the base lock
+  (the RAPIDS `cuml` → numba-vs-numpy cap the dogfood hit), isolate it in a second env rather than
+  bending the base project's pins; documented with the `.venv-gpu` recipe.
+- **`prove-on-synthetic, flip-to-real`** documented as the `tabular` default — the skeleton runs
+  end-to-end on synthetic data behind `dataset.synthetic=true`, and real data is a flag flip, not a
+  rebuild (redeems the v0.8.0 tabular skeleton work).
+
+### Changed
+- **`/gate` PASS now cascades to `roadmap.md`** — advancing the phase ledger moves the passed gate's
+  item from *Now* to *Done* and surfaces the next phase, instead of leaving the backlog stale for
+  wrapup to reconcile by hand (2× dogfood friction).
+- **`/intake` baseline env-confirm is now mandatory and un-skippable** — hardware/GPU/arch/storage
+  is asked out loud, never inferred from the plan doc (the dogfood inferred CPU/SQLite when the real
+  box was DGX Spark ARM+GPU + Postgres). Plus a new **version-control-scope question** (commit the
+  process backbone vs all-local → `.gitignore`, one-canonical-home guidance, the `git add &&` short-
+  circuit warning) and a note that `skillOverrides` flips need a session boundary before invocation.
+- **`guard-pyproject` no longer false-blocks legit `[tool.*]` edits** — `DEP_PATTERN` is anchored on
+  TOML table headers / requirement list-items instead of substring-matching, so `[tool.ruff]` /
+  `[tool.pytest]` / `build-system.requires` context no longer trips the dependency guard (verified
+  against a 9-case table).
+- **Prose-aware lint budget** — `[tool.ruff] line-length = 100` is now the scaffold convention
+  (`env-uv` documents it, `/bootstrap` registers it), because `ruff format` can't wrap E501 in
+  docstrings/comments; `validate-python`'s docstring says so.
+
 ## [0.8.0] — 2026-07-18
 
 The multi-archetype release: `/bootstrap` now generates the skeleton your archetype actually

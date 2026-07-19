@@ -18,9 +18,17 @@ import re
 import sys
 from pathlib import Path
 
+# Match only *dependency declarations*, anchored to line starts (re.M) — a dependency-table header,
+# the runtime-deps array assignment, or a requirement string as a list item. Anchoring is deliberate:
+# the old substring match false-blocked legitimate `[tool.ruff]`/`[tool.pytest]` edits whose anchor
+# context merely *contained* the word `dependency-groups` or a `build-system.requires` string. A bare
+# occurrence of the word no longer trips it; you have to actually touch a dep declaration.
 DEP_PATTERN = re.compile(
-    r"(\bdependencies\b|optional-dependencies|dependency-groups"
-    r"|['\"][A-Za-z0-9_.-]+\s*[><=!~]=)"  # a "pkg>=1.2"-shaped requirement line
+    r"""(?xm)
+      ^\s*\[(?:project\.optional-dependencies|dependency-groups)\]  # a dependency-table header
+    | ^\s*dependencies\s*=\s*\[                                      # [project] runtime deps array
+    | ^\s*['"][A-Za-z0-9_.-]+(?:\[[^\]]*\])?\s*[><=!~]=             # a "pkg>=1.2" requirement, as a list item
+    """
 )
 
 
@@ -47,7 +55,9 @@ def main() -> int:
         return 2
 
     if tool == "Edit":
-        touched = (tool_input.get("old_string") or "") + (tool_input.get("new_string") or "")
+        touched = (tool_input.get("old_string") or "") + (
+            tool_input.get("new_string") or ""
+        )
         if DEP_PATTERN.search(touched):
             sys.stderr.write(
                 "[guard-pyproject] Blocked: this Edit touches a dependency entry. "

@@ -10,6 +10,11 @@ written gate + a decision-log line.
   retro produces PROCESS.md 0.3.0 + the real README walkthrough → **the 1.0 gate**
 
 ## Next
+- **`docs/` snapshot auto-sync** (dota2 dogfood theme #2, 3× friction): a `/wrapup`-time step or hook
+  that regenerates published `docs/` process snapshots from the canonical `.claude/memory/process/`
+  copies, so the two never drift. v0.9.0 shipped the canonical-home *guidance*; this is the automation.
+- **`/wrapup` × `memory` skill restatement drift** (this repo's own journal): `/wrapup` copies the
+  memory skill's step list; watch for real drift, and if it bites, reference the numbered steps instead.
 - Run `/doctor` to confirm the skill-listing budget post-rewrite
 - Watch skill surfacing after the description rewrite; sharpen under-triggering descriptions
 - Dogfood-tune the `SessionStart` briefing: is its length right, and does the "finish before
@@ -25,6 +30,12 @@ written gate + a decision-log line.
 - Data-validation tool skill (pandera/great-expectations)
 
 ## Done (recent)
+- **v0.9.0 — dota2 dogfood refining patch** (harvested from `dota2-prediction-engine`, scaffold v0.7.0,
+  18 journal entries): predictive-signal screen → `eda` + P3 exit-gate go/no-go (PROCESS.md 0.3.0, the
+  headline lesson); `/gate` PASS cascades to roadmap; `/intake` mandatory env-confirm + VC-scope +
+  skillOverrides session-boundary note; `guard-pyproject` anchored on TOML headers; `env-uv`
+  isolated-GPU-env pattern + line-length-100 convention; `tabular` prove-on-synthetic-flip-to-real
+  documented — 2026-07-19, branch `scaffold-refine-dota2-dogfood`. See `scaffold-journal.md` Themes.
 - Multi-archetype `/bootstrap` skeletons (tabular §3e, time-series §3f, LLM data+eval §3g) — 2026-07-18, v0.8.0
 - Ship clean memory stores — `install.sh` no longer copies this repo's dev session notes / roadmap /
   journal into fresh projects; seeds blank stores from `templates/memory/` — 2026-07-18,

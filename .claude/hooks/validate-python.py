@@ -10,6 +10,10 @@ actually ran — so a missing tool never reports a false success (the bug this r
 Note: `ruff check --fix` exits 1 when fixable-but-unfixed lint remains — a normal result, not a
 hook failure — so only OTHER non-zero codes count as "ruff couldn't run". For non-Python
 projects, remove this hook from settings.json.
+
+Prose caveat: `ruff format` reflows code but NOT docstrings/comments, so E501 in prose is the one
+class of lint this hook can't autofix — you hand-wrap it. Set `[tool.ruff] line-length` once (the
+scaffold uses 100; see `env-uv`) and write prose to that budget so it lands right the first time.
 """
 
 import json
